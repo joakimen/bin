@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -e
+
+# Installerer en gitt versjon av kubectl
+
+[[ -z $1 ]] && {
+  echo "Usage: $0 [version]"
+  exit 1
+}
+
+CMD=kubectl
+DIR=/usr/local/bin
+ABS="$DIR/$CMD"
+
+kubectl_version() {
+  command -v $ABS > /dev/null && {
+    $ABS version --short | rg client | awk '{print $3}' | sed 's/^v//g'
+  }
+}
+
+oldVersion=$(kubectl_version)
+[[ $oldVersion = "$1" ]] && {
+  echo "Version v$1 is already installed, exiting"
+  exit 1
+}
+echo "Installing kubectl v$1 (current version: v$oldVersion)"
+
+cd "$(mktemp -d)"
+
+echo "> Downloading kubectl v$1 .."
+curl -LOs https://storage.googleapis.com/kubernetes-release/release/v"${1}"/bin/darwin/amd64/kubectl
+
+echo "> Making kubectl executable .."
+chmod +x ./kubectl
+
+echo "> Moving kubectl to /usr/local/bin .."
+sudo mv ./kubectl /usr/local/bin/kubectl
+
+echo "Successfully installed version $(kubectl_version)"

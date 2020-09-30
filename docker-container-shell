@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -e
+
+# Open a shell-session in the specified container
+
+container=$(docker-container-select)
+docker exec -it "$container" bash

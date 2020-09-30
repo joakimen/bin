@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+set -v
+
+git init .
+git add .
+git commit -m 'initial commit'
+hub create -p
+git push -u origin master

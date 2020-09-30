@@ -1,0 +1,51 @@
+#!/bin/bash
+shopt -s expand_aliases
+
+# create a dummy git repo with some commits and branches
+
+alias g=git
+alias gcb="git checkout -b"
+
+gc() {
+  git add .
+  git commit -m "$1"
+}
+fruit() {
+  echo "$1" >> fruit.txt
+  gc "added $1"
+}
+veg() {
+  echo "$1" >> vegetables.txt
+  gc "added $1"
+}
+
+g init .
+echo "My repo" >> README.md
+gc "initial commit"
+
+fruit apple
+fruit orange
+fruit banana
+
+
+# start feature 1
+gcb feature1/vegetables
+veg squash
+veg salad
+veg cucumber
+
+g checkout master
+# finish feature 1
+g merge feature1/vegetables --no-ff -m "merge feature1"
+
+
+
+# start feature 2
+gcb feature2/vegetables
+veg carrot
+veg leek
+veg eggplant
+
+
+# view results
+git --no-pager log --graph --decorate --oneline

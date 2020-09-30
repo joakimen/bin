@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+#
+# osascript-wrapper for osx notifications
+#
+
+[[ $# < 0 ]] && exit
+
+title=$1
+message=$2
+sound=$3
+
+osascript -e "display notification \"$message\" with title \"$title\""

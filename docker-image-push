@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -e
+
+image=$(docker-image-select)
+
+docker push "$image"

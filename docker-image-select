@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+docker-image-list | fzf --query="$1"

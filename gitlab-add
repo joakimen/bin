@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -e
+set -v
+
+dir=$(basename $(pwd))
+git push --set-upstream git@github.com:krystah/$dir.git master

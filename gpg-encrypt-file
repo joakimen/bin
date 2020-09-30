@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -e
+
+# Krypterer en fil med GPG-nøkkel valgt med fzf
+
+[[ -z $1 ]] && {
+  echo "Usage: $0 [filnavn]"
+  exit 1
+}
+
+file="$1"
+key=$(gpg-select-key)
+
+gpg --encrypt --recipient "$key" "$file"

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+# Deletes one or more containers
+
+containers=$(docker-container-list --all)
+
+# select one or more stoppped containers and join them to a single line
+selected=$(echo "$containers" | fzf --multi | awk '{print $1}' | paste -sd " " -)
+
+docker rm $(echo "$selected")
