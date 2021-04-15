@@ -4,10 +4,8 @@
 # osascript-wrapper for osx notifications
 #
 
-[[ $# < 0 ]] && exit
-
-title=$1
-message=$2
-sound=$3
-
-osascript -e "display notification \"$message\" with title \"$title\""
+[[ -z $1 ]] && {
+  echo "usage: $0 <title>"
+  exit
+}
+osascript -e "display notification \"$1\" "

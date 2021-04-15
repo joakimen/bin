@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+[[ -z $1 || -z $2 ]] && {
+  echo "Usage: ssh-check-keypair-match <key1> <key2>"
+  exit
+}
+diff <( ssh-keygen -y -e -f "$1" ) <( ssh-keygen -y -e -f "$2" )

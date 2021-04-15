@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+[[ -z $1 ]] && exit
+cat << EOF > "$1"
+#!/usr/bin/env bash
+
+EOF
+chmod +x "$1"
+$EDITOR "$1" -c 'set ft=sh'

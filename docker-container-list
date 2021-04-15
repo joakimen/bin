@@ -4,7 +4,7 @@ set -e
 args="$1"
 format="table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.CreatedAt}}"
 
-if [[ -n $args  ]]; then
+if [[ -n $args ]]; then
   docker ps "$args" --format "$format" | sed 1d
 else
   docker ps --format "$format" | sed 1d

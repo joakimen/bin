@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+ctlptl create cluster kind \
+  --registry=ctlptl-registry \
+  --kubernetes-version=v1.16.0

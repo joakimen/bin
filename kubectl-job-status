@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+job=$(kubectl get jobs | fzf | awk '{print $1}')
+[[ -z $job ]] && exit
+kubectl get jobs "$job" -o json | jq '.status.conditions'

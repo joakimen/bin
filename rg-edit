@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+[[ -z "$1" ]] && {
+  echo "$0: no pattern specified"
+  exit
+}
+
+$EDITOR $(rg -l "$1")
