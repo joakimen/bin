@@ -3,4 +3,4 @@ set -e
 set -v
 
 dir=$(basename $(pwd))
-git push --set-upstream git@github.com:krystah/$dir.git master
+git push --set-upstream git@github.com:joakimen/$dir.git master
