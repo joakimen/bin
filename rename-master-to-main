@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -e
+
+[[ $(git status -s) ]] && {
+  echo "Working tree is dirty, aborting" >&2
+  exit 1
+}
+
+git branch -m master main
+git push origin main
+gh api -X PATCH repos/{owner}/{repo} -F default_branch=main --silent
+git push origin --delete master
