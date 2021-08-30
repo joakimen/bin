@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+[[ -z $1 ]] && exit
+cat << EOF > "$1"
+#!/usr/bin/env bb
+
+EOF
+chmod +x "$1"
+code "$1"
+bb --nrepl-server 1667
