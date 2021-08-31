@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# flush dns on macOS
+sudo dscacheutil -flushcache
+sudo killall -HUP mDNSResponder
