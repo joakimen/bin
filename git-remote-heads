@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# List all remote heads without prefix for use with git switch
+#
+# Stolen from:
+# https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
+
+pfx="${1-}" cur_="${2-}" sfx="${3-}"
+fer_pfx="${pfx//\%/%%}"
+
+git for-each-ref --format="$fer_pfx%(refname:strip=3)$sfx" \
+  --sort="refname:strip=3" \
+  "refs/remotes/*/$cur_*" "refs/remotes/*/$cur_*/**" | \
+uniq -u
