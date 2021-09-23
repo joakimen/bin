@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+# Delete all merged branches
+
+cur_branch=$(git rev-parse --abbrev-ref @)
+branch_excludes="(^\*|master|main|dev)"
+
+[[ $cur_branch =~ $branch_excludes ]] || {
+  echo "Error: branch cleanup should not be done from a feature-branch" >&2
+  echo "Current branch: $cur_branch" >&2
+  exit 1
+}
+
+branches_to_delete=$(git branch --merged | rg -v "$branch_excludes")
+
+cat << EOF
+> Deleting the following branches:
+$branches_to_delete
+
+EOF
+
+read -p "Are you sure? (Y/y) " -n 1 -r
+echo
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    exit 1
+fi
+
+echo "> Deleting branches.."
+for branch in $branches_to_delete; do
+  git branch -d "$branch"
+done
+echo "> done."
