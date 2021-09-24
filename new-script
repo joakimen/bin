@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 [[ -z $1 ]] && exit
+
+[[ -f $1 ]] && {
+  echo "$1 already exists"
+  exit
+}
+
 cat << EOF > "$1"
 #!/usr/bin/env bash
 
