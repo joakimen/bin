@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+# bootstraps a go-module for quick experimentation
+
+cd "$(mktemp -d)" || exit
+echo "tmpdir: $PWD"
+
+proj=twaddle
+
+mkdir $proj
+cd "$proj" || exit
+go mod init $proj
+
+cat <<EOF >main.go
+package main
+
+import "log"
+
+func main() {
+        log.Println("moo")
+}
+EOF
+go run main.go
+code .

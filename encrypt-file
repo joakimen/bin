@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+
+# encrypt a file using gpg
+
+key=$(select-gpg-pubkey)
+file=$(fzf)
+
+gpg --encrypt --recipient "$key" "$file"

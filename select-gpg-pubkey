@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+# Print email of selected pubkey
+
+gpg --list-keys | rg uid | choose 3:5 | sort | fzf | choose -f '[<>]' 1

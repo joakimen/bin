@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+# checkout a remote branch
+
+remote_branches=$(git-remote-heads | rg -v "(master|main|develop|HEAD)")
+
+[[ -z $remote_branches ]] && {
+  echo "no remote, non-excluded branches" >&2
+  exit 1
+}
+
+echo "$remote_branches" | fzf | xargs git switch

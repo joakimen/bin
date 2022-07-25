@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+
+# Open a shell-session in the specified container
+
+docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.CreatedAt}}" --noheading |
+    fzf |
+    choose 0 |
+    xargs -I {} docker exec -it {} sh

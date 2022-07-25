@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-set -e
+set -eo pipefail
 
 # Pusher et lokalt docker-image til repo
 
-image=$(docker-image-select)
-docker push "$image"
+list-images | fzf | xargs docker push

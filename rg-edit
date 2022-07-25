@@ -5,4 +5,5 @@
   exit
 }
 
-$EDITOR $(rg -l "$1")
+# open rg-results in nvim quickfix
+nvim -q <(rg --vimgrep "$1") -c copen

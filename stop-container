@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+# stops one or more running docker-containers
+
+container=$(docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}" --noheading |
+    fzf --multi |
+    choose 0 |
+    paste -sd " " -)
+
+docker stop $(echo "$container")

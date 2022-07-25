@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+# choose key and format filename
+key=$(select-gpg-pubkey)
+filename="$(echo "$key" | choose -f @ 0 | sd '\.' '-').gpg"
+
+# export key to file
+gpg --armor --output "$filename" --export "$key"

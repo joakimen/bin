@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
 set -o pipefail
 
-# Lister alle docker-images
-
 docker images --format "{{.Repository}}:{{.Tag}}" | rg -v "<none>"

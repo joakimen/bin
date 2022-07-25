@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+trap finito SIGINT
+finito() { 
+  exit 
+}
+
+thetime() {
+  date "+%H:%M:%S"
+}
+
+notify() {
+  osascript -e "display notification \"$2\" with title \"$1\""
+}
+
+while true; do
+  echo "[$(thetime)] pinging $1..."
+  ping "$1" -c 1 -W 1000 >/dev/null && {
+    echo "success!"
+    notify "ping" "[$(thetime)] $1 is up!"
+    exit
+  }
+  sleep 0.5
+done

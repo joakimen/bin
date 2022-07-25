@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-pid=$(ps axo user,pid,time,args | sed 1d | fzf | awk '{print $2}')
-[[ -n $pid ]] && kill -9 $pid

@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-set -eo pipefail
-
-# List a single, running container
-
-docker-container-list | fzf | awk '{print $1}'

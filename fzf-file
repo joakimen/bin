@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-set -e
+set -eo pipefail
 
 help() {
-  cat << EOF
+  cat <<EOF
 usage: $0 <command>
 
 Commands:
@@ -21,24 +21,19 @@ EOF
   exit
 }
 
-
 choose_file() {
-  fzf \
-    --query=$2 \
-    --exit-0 \
-    --preview='[[ $(file --mime {}) =~ binary ]] && echo "<binary>" ||
-                (cat {}) 2> /dev/null | head -500' \
-                || exit
+  fzf --preview='[[ $(file --mime {}) =~ binary ]] && echo "<binary>" ||
+                (cat {}) 2> /dev/null | head -500' || exit
 }
 
 file=$(choose_file)
 
 case "$1" in
-  edit) ${EDITOR:-vim} "$file" ;;
-  tig) tig "$file" ;;
-  rm) rm -i "$file" ;;
-  cat) cat "$file" ;;
-  copy-path) echo "$(pwd)/$file" | pbcopy ;;
-  copy-content) pbcopy < "$file" ;;
-  *) help ;;
+edit) ${EDITOR:-vim} "$file" ;;
+tig) tig "$file" ;;
+rm) rm -i "$file" ;;
+cat) cat "$file" ;;
+copy-path) echo "$(pwd)/$file" | pbcopy ;;
+copy-content) pbcopy <"$file" ;;
+*) help ;;
 esac

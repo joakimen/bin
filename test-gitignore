@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+root=$(git rev-parse --show-toplevel)
+fd . -t f --hidden "$root" | entr git -C "$root" status

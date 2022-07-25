@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-set -e
-
-# Lar bruker velge en gpg-nøkkel ved navn/epost og printer relatert info
-
-key=$(gpg-select-key)
-gpg --list-keys | rg "$key" -B2 -A1 --color=never

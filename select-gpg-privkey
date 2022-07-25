@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+# Print email of selected private key
+
+gpg --list-secret-keys | rg uid | choose 2: | sort | fzf | choose -f '[<>]' 1

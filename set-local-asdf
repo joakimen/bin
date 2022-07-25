@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -e
+
+# create a .tool-versions in curdir for the desired plugin/version
+
+command -v asdf &>/dev/null || {
+  echo "asdf not installed, exiting" >&2
+  exit 1
+}
+
+plugin=$(asdf plugin list | fzf)
+version=$(asdf list "$plugin" | sd '[* ]' '' | fzf)
+
+asdf local "$plugin" "$version"

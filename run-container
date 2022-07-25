@@ -3,5 +3,4 @@ set -e
 
 # Starts a container with a given docker-image
 
-image=$(docker-image-select)
-docker run "$image"
+list-images | xargs docker run

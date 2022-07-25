@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -e
+
+# decrypt a file using gpg
+
+file=$(fzf)
+gpg --output "${file%.*}" --decrypt "$file"

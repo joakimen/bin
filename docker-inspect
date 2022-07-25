@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-set -eo pipefail
-
-# docker inspect et image og åpne resultat i nvim
-
-image=$(docker-image-list | fzf -0)
-docker inspect "$image" | nvim -c 'set ft=json' -

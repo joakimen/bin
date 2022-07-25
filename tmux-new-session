@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+[[ -z $1 ]] && exit
+
+# create detached session to avoid "nested session"-error
+
+tmux new-session -s "$1" -d
+tmux switch -t "$1"

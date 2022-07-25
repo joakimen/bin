@@ -11,4 +11,5 @@ cat << EOF > "$1"
 
 EOF
 chmod +x "$1"
+tmux splitw -d "ls $1 | entr -c ./$1"
 $EDITOR "$1" -c 'set ft=sh'

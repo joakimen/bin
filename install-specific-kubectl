@@ -8,13 +8,11 @@ set -e
   exit 1
 }
 
-CMD=kubectl
-DIR=/usr/local/bin
-ABS="$DIR/$CMD"
+BIN="$HOME/.local/bin/kubectl"
 
 kubectl_version() {
-  command -v $ABS > /dev/null && {
-    $ABS version --short | rg client | awk '{print $3}' | sed 's/^v//g'
+  command -v "$BIN" >/dev/null && {
+    $BIN version --short | rg client | choose 2 | sd '^v' ''
   }
 }
 
@@ -34,6 +32,6 @@ echo "> Making kubectl executable .."
 chmod +x ./kubectl
 
 echo "> Moving kubectl to /usr/local/bin .."
-sudo mv ./kubectl /usr/local/bin/kubectl
+mv ./kubectl "$BIN"
 
 echo "Successfully installed version $(kubectl_version)"

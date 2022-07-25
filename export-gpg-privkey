@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+# choose key and format filename
+key=$(select-gpg-privkey)
+filename="$(echo "$key" | choose -f @ 0 | sd '\.' '-').gpg"
+
+# export key to file
+gpg --output "$filename" --export-secret-keys "$key"

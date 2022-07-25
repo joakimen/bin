@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-# Velg 1 docker-image fra fzf
-
-docker-image-list | fzf --query="$1"
