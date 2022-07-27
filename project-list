@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# Read project-roots from configfile and use them to find projects
+
+while read -r dev_dir; do
+  fd --base-directory "$HOME/$dev_dir" \
+    --exact-depth=2 \
+    --no-ignore \
+    --hidden \
+    --type directory \
+    --exclude venv \
+    -x echo "${dev_dir}/{.}"
+done <"$XDG_CONFIG_HOME"/projects
