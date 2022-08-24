@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # Read project-roots from configfile and use them to find projects
+[[ -f $XDG_CONFIG_HOME/projects ]] || exit
 
 while read -r dev_dir; do
   fd --base-directory "$HOME/$dev_dir" \
