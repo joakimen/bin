@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+tracked_files=$(git ls-files)
+file=$(fzf <<<"$tracked_files")
+tig "$file"
