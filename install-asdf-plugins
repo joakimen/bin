@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
-asdf plugin add babashka https://github.com/fredZen/asdf-babashka.git
-asdf plugin add clojure https://github.com/asdf-community/asdf-clojure.git
-asdf plugin add java https://github.com/halcyon/asdf-java.git
-asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
-asdf plugin add python https://github.com/danhper/asdf-python.git
-asdf plugin add lua https://github.com/Stratus3D/asdf-lua.git
-asdf plugin add golang https://github.com/kennyp/asdf-golang.git
-asdf plugin add deno https://github.com/asdf-community/asdf-deno.git
+while read -r plugin; do
+    printf "Installing plugin: %s..\n" "$plugin"
+    asdf plugin add "$plugin"
+done <"$XDG_CONFIG_HOME/asdf/plugins"
+printf "\nDone.\n"
