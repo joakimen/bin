@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+account=$(aws-vault list | tail +3 | choose 0 | fzf)
+aws-vault exec "$account"
