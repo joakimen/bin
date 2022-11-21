@@ -3,7 +3,7 @@
 # open a sandboxed chrome-session with the specified aws profile credentials
 
 profile="$1"
-[[ -z "$profile" ]]; then
+if [[ -z "$profile" ]]; then
     echo "Profile is a required argument" >&2
     return 1
 fi
