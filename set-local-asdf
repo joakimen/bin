@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -eo pipefail
 
 # create a .tool-versions in curdir for the desired plugin/version
 
@@ -9,6 +9,12 @@ command -v asdf &>/dev/null || {
 }
 
 plugin=$(asdf plugin list | fzf)
-version=$(asdf list "$plugin" | sd '[* ]' '' | fzf)
+echo "plugin: $plugin"
+versions=$(asdf list "$plugin" 2>&1) # asdf doesn't return 1 but writes to stderr
+[[ "$versions" == *"No versions installed"* ]] && {
+  echo "error: $(xargs <<< $versions)" # xargs for ltrim
+  exit 1
+}
+choice=$(cat "$versions"| sd '[* ]' '' | fzf)
 
 asdf local "$plugin" "$version"
