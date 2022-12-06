@@ -4,3 +4,7 @@
 .venv
 /.DS_Store
 chezmoi
+
+.nrepl-port
+.vscode
+venv
