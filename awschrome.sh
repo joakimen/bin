@@ -5,7 +5,7 @@
 profile="$1"
 if [[ -z "$profile" ]]; then
     echo "usage: $0 <aws-profile>" >&2
-    return 1
+    exit 1
 fi
 
 # run aws-vault
@@ -15,10 +15,9 @@ status=$?
 if [[ $status -ne 0 ]]; then
     # bash will also capture stderr, so echo $url
     echo "$url"
-    return $status
+    exit $status
 fi
 
-# mkdir -p "$user_data_dir"
 /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
     --no-first-run \
     --user-data-dir="$(mktemp -d /tmp/awschrome_userdata.XXXXXXXX)" \
