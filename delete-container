@@ -4,7 +4,7 @@ set -eo pipefail
 # deletes one or more containers
 
 # select one or more stoppped containers and join them to a single line
-selected=$(docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.CreatedAt}}" --noheading --all |
+selected=$(docker ps --format "{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.CreatedAt}}" --all |
     fzf --multi |
     choose 0 |
     paste -sd " " -)

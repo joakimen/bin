@@ -3,7 +3,10 @@ set -e
 
 # Open a shell-session in the specified container
 
-docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.CreatedAt}}" --noheading |
+container=$(docker ps --format "{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.CreatedAt}}" |
     fzf |
-    choose 0 |
-    xargs -I {} docker exec -it {} sh
+    choose 0)
+
+cmd="docker exec -it $container sh"
+echo "$cmd"
+$cmd

@@ -2,7 +2,7 @@
 set -eo pipefail
 
 # find all stoppped containers
-container=$(docker ps --all --format "table {{.Names}}\t{{.Image}}\t{{.Status}}" --noheading |
+container=$(docker ps --all --format "{{.Names}}\t{{.Image}}\t{{.Status}}" |
     rg -vw "Up" |
     fzf --multi |
     choose 0 |
