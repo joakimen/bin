@@ -3,6 +3,8 @@
          '[clojure.set :as set]
          '[cheshire.core :as json])
 
+;; list sqs queues and their visible/hidden messages
+
 (defn create-client []
   (aws/client {:api :sqs
                :region "eu-west-1"}))
@@ -32,12 +34,6 @@
 (defn to-json [data]
   (json/generate-string data {:pretty true}))
 
-
-(->> ["pwd" "ls"]
-     (map #(future (shell/sh %)))
-     (map deref))
-
-
 (let [client (create-client)
       queues (list-queues client)]
   (->> queues
@@ -55,7 +51,7 @@
 
   (-> (aws/invoke client {:op :GetQueueAttributes
                           :request
-                          {:QueueUrl "https://sqs.eu-west-1.amazonaws.com/464824668216/europris-staging-receipt-ingress-queue-dlq"
+                          {:QueueUrl "https://sqs.eu-west-1.amazonaws.com/4643458345/my-clj-queue"
                            :AttributeNames
                            ["ApproximateNumberOfMessages"
                             "ApproximateNumberOfMessagesNotVisible"]}})
