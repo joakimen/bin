@@ -6,7 +6,7 @@ set -eo pipefail
 if [[ $# -eq 2 ]]; then
   repo=$1/$2
 else
-  repo=$(gh repo list | choose 0 | fzf)
+  repo=$(gh repo list --limit 1000 | choose 0 | fzf)
 fi
 repoPath=$HOME/dev/github.com/$repo
 [[ -d "$repoPath" ]] && {
