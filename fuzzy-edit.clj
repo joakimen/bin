@@ -16,4 +16,5 @@
                  (filter fs/regular-file?)
                  (str/join "\n"))
       file (fzf files)]
-  (p/shell (format "nvim %s" file)))
+  (when-not (str/blank? file)
+    (p/shell (format "%s %s" (System/getenv "EDITOR") file))))
