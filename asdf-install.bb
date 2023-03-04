@@ -7,21 +7,25 @@
 (defn run [cmd]
   (let [res (p/sh cmd)]
     (when (> (:exit res) 0)
-      (println (:err res))
+      (->> res :err str/trim println)
       (System/exit (:exit res)))
     (->> res :out str/trim)))
 
 (defn list-languages []
-  (->> (run "asdf plugin list")))
+  (run "asdf plugin list"))
 
 (defn list-versions [lang]
-  (->> (run (str "asdf list all " lang))))
+  (run (str "asdf list all " lang)))
 
 (defn fzf [s]
-  (let [proc (p/process ["fzf" "-m"]
+  (let [res @(p/process ["fzf" "-m"]
                         {:in s :err :inherit
                          :out :string})]
-    (-> @proc :out str/trim)))
+    (when (> (:exit res) 0)
+      ;; this is usually because of a Ctrl-C and doesnt
+      ;; warrant printing stderrr
+      (System/exit (:exit res)))
+    (->> res :out str/trim)))
 
 (let [lang (fzf (list-languages))
       version (fzf (list-versions lang))]
