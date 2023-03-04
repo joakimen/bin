@@ -37,6 +37,9 @@
                      {:type "go"
                       :detector (fn [] (file-exists? "go.mod"))
                       :weight 1}
+                     {:type "babashka"
+                      :detector (fn [] (file-exists? "bb.edn"))
+                      :weight 1}
                      {:type "node"
                       :detector (fn [] (file-exists? "package.json"))
                       :weight 1}]
