@@ -1,0 +1,36 @@
+#!/usr/bin/env bb
+(require '[babashka.process :as p]
+         '[clojure.string :as str])
+
+(defn run [cmd]
+  (let [result (p/sh cmd)]
+    (when (> (:exit result) 0)
+      (->> result :err str/trim println)
+      (System/exit (:exit result)))
+    (->> result :out str/trim)))
+
+;; define multimethod
+(defmulti action (fn [project] [(:type project)]))
+
+;; maven
+(defmethod action ["maven"] [_]
+  (p/shell "mvn spotless:check"))
+
+;; TODO: defmethods should use p/shell {:continue true} to avoid printing stack traces
+
+;; go
+(defmethod action ["go"] [_]
+  (p/shell "go test -v"))
+
+;; default
+(defmethod action :default [project]
+  (throw (IllegalArgumentException.
+          (str "unsupported project type: " project))))
+
+(action {:type (run "guess-project.bb")})
+
+(comment
+  (action {:type "maven"})
+
+  (let [project-type (run "guess-project.bb")]
+    (println "project:" project-type)))
