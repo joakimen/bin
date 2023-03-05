@@ -16,9 +16,6 @@
   "repos are cloned here"
   (str (System/getenv "HOME") "/dev/github.com"))
 
-(clojure.repl/doc fzf)
-
-
 (defn github-username
   "if neither user or repo-args are supplied, read username from git config"
   []
