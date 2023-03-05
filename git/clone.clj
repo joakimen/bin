@@ -52,7 +52,7 @@
          (map #(assoc {} :user (-> % :owner :login) :name (:name %))))))
 
 (defmethod search "name" [repo]
-  (let [response (run (format "gh search repos %s --json owner,name --limit 100" (:value repo)))]
+  (let [response (run (format "gh search repos %s --json owner,name --limit 100 --match name" (:value repo)))]
     (->> (json/parse-string response true)
          (map #(assoc {} :user (-> % :owner :login) :name (:name %))))))
 
