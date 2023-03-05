@@ -8,3 +8,4 @@ chezmoi
 .nrepl-port
 .vscode
 venv
+.cpcache
