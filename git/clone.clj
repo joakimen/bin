@@ -4,13 +4,19 @@
 - search repos by name
 - search repos by user
 - fuzzy filtering using fzf
-- supports cloning multiple repos in parallel "
+- supports cloning multiple repos in parallel
+   
+install: bbin install https://raw.githubusercontent.com/joakimen/bin/7485cecbac86bbecdbe9d58b486d4da538d30c99/git/clone.clj
+
+usage: 
+   $ clone
+   $ clone -u joakimen
+   $ clone -n babashka
+"
   (:require [babashka.process :refer [sh process]]
             [clojure.string :as str]
             [cheshire.core :as json]
             [babashka.cli :as cli]))
-
-
 
 (def repo-root
   "repos are cloned here"
