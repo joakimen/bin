@@ -1,6 +1,7 @@
 #!/usr/bin/env bb
-(require '[babashka.process :as p]
-         '[clojure.string :as str])
+(ns asdf.install
+  (:require [babashka.process :as p]
+            [clojure.string :as str]))
 
 ;; install asdf-plugins, filtered through fzf
 
