@@ -1,5 +1,5 @@
 #!/usr/bin/env bb
-(ns aws.s3.select-bucket
+(ns aws.s3.select-buckets
   (:require [babashka.process :as p]
             [clojure.string :as str]))
 
