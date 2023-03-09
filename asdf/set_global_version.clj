@@ -1,6 +1,7 @@
 #!/usr/bin/env bb
-(require '[babashka.process :as p]
-         '[clojure.string :as str])
+(ns asdf.set-global-version
+  (:require [babashka.process :as p]
+            [clojure.string :as str]))
 
 ;; set global version of an asdf-plugin, filtered through fzf
 
