@@ -1,3 +1,4 @@
+#!/usr/bin/env bb
 (ns asdf.set-local-version
   (:require [babashka.process :as p]
             [clojure.string :as str]))

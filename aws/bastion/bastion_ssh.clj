@@ -1,3 +1,4 @@
+#!/usr/bin/env bb
 (ns aws.bastion.bastion-ssh
   (:require [babashka.process :as p]
             [clojure.string :as str]

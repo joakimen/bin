@@ -1,3 +1,4 @@
+#!/usr/bin/env bb
 (ns aws.bastion.list-bastion-instances
   "list bastion hosts, using edn-output meant to be parsed"
   (:require [babashka.process :as p]
