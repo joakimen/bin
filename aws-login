@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-set -eo pipefail
-
-account=$(aws configure list-profiles | fzf)
-awschrome.sh "$account"
