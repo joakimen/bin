@@ -1,4 +1,4 @@
-(ns aws.aws-vault.open-aws-chome
+(ns aws.aws-vault.aws-login
   "select N aws profiles, then open them in aws_chrome"
   (:require [babashka.process :as p]
             [clojure.string :as str]))
