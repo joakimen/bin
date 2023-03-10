@@ -49,6 +49,7 @@
 
   (def client (create-client))
 
+  (aws/invoke client {:op List})
   (list-pipelines client)
   (list-stages client "pl-123")
 
@@ -70,6 +71,7 @@
                            :request {:name "pl-123"}})
        :stageStates
        (map transform-stage))
+
 
 ;; 
   )
