@@ -45,8 +45,7 @@
                       :detector (fn [] (file-exists? "package.json"))
                       :rank 10}]
       projects-found (->> project-types
-                          (map #(future (detect %)))
-                          (map deref)
+                          (pmap detect)
                           (filter #(= (:found %) true)))
       project (->> projects-found
                    (sort-by :weight #(compare %2 %1)) ;; reverse
