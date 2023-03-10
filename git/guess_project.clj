@@ -1,7 +1,8 @@
 #!/usr/bin/env bb
-(require '[babashka.process :refer [sh]]
-         '[babashka.fs :as fs]
-         '[clojure.string :as str])
+(ns git.guess-project
+  (:require [babashka.process :refer [sh]]
+            [babashka.fs :as fs]
+            [clojure.string :as str]))
 
 (defn run
   "run shell cmd"
