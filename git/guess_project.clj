@@ -37,13 +37,13 @@
                       :rank 1}
                      {:type "go"
                       :detector (fn [] (file-exists? "go.mod"))
-                      :weight 1}
+                      :rank 1}
                      {:type "babashka"
                       :detector (fn [] (file-exists? "bb.edn"))
-                      :weight 1}
+                      :rank 1}
                      {:type "node"
                       :detector (fn [] (file-exists? "package.json"))
-                      :weight 1}]
+                      :rank 10}]
       projects-found (->> project-types
                           (map #(future (detect %)))
                           (map deref)
