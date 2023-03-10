@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-set -e
-
-gh pr list | fzf | choose 0 | xargs -I {} gh pr checkout {}
