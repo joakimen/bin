@@ -5,18 +5,18 @@
 
 ;; set global version of an asdf-plugin, filtered through fzf
 
-(defn run [cmd]
-  (let [res (p/sh cmd)]
+(defn run [& args]
+  (let [res (apply p/sh args)]
     (when (> (:exit res) 0)
       (->> res :err str/trim println)
       (System/exit (:exit res)))
     (->> res :out str/trim)))
 
 (defn list-languages []
-  (->> (run "asdf plugin list")))
+  (->> (run "asdf" "plugin" "list")))
 
 (defn list-versions [lang]
-  (->> (run (str "asdf list " lang))))
+  (->> (run "asdf" "list" lang)))
 
 (defn fzf [s]
   (let [res @(p/process ["fzf" "-m"]
@@ -35,7 +35,7 @@
                    (str/join "\n")
                    fzf)]
   (println "setting" lang "version" version "as global default")
-  (p/shell (format "asdf global %s %s" lang version)))
+  (p/shell "asdf" "global" lang version))
 
 (comment
   (str/replace "   *5.23.10" #"[\*\s]*" "")
