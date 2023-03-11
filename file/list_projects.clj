@@ -1,5 +1,6 @@
 (ns file.list-projects
-  "find git-projects"
+  "find git-projects
+   - configuration file: $XDG_CONFIG_HOME/projects.yaml"
   (:require [babashka.fs :as fs]
             [babashka.process :as p]
             [clj-yaml.core :as clj-yaml]
