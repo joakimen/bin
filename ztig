@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
 set -e
-tracked_files=$(git ls-files)
-file=$(fzf <<<"$tracked_files")
-tig "$file"
+file=$(git ls-files | fzf --preview "git log --oneline -n 20 --color=always {}")
+lazygit -f "$file"
