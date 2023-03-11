@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-set -eo pipefail
-file=$(fzf --preview='bat --line-range :20 --number --color=always {}')
-"$EDITOR" "$file"
