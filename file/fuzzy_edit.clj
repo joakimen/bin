@@ -18,7 +18,7 @@
                          (filter #(fs/which (:bin %)))
                          (sort-by :pri) first :cmd)
         proc @(p/process ["fzf" "-m" "--preview"
-                          preview-cmd "--preview-window" "70%"]
+                          preview-cmd "--preview-window" "50%"]
                          {:in :inherit
                           :out :string
                           :err :inherit})]
