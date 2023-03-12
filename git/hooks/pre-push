@@ -27,10 +27,10 @@
   (throw (IllegalArgumentException.
           (str "unsupported project type: " project))))
 
-(action {:type (run "guess-project.bb")})
+(action {:type (run "guess-project")})
 
 (comment
   (action {:type "maven"})
 
-  (let [project-type (run "guess-project.bb")]
+  (let [project-type (run "guess-project")]
     (println "project:" project-type)))
