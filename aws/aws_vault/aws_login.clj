@@ -12,4 +12,6 @@
 (defn open-in-awschrome [profile]
   (p/shell "aws-chrome" profile))
 
-(pmap open-in-awschrome (select-aws-profiles))
+(->> (select-aws-profiles)
+     (map open-in-awschrome)
+     doall)
