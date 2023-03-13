@@ -5,6 +5,8 @@
 
    pulls updates to the given list of repositories
  
+   Idea: Incorporate pull-flag (bool) in projects.yaml?
+ 
    # requirements
  
    determine projects (hard-coded list is not feasible)
@@ -32,7 +34,6 @@
    "
   (:require [babashka.process :refer [sh]]
             [clj-yaml.core :as clj-yaml]
-            [clojure.java.io :as io]
             [clojure.string :as str]
             [babashka.fs :as fs]
             [taoensso.timbre :as log]))
@@ -60,7 +61,18 @@
       :out str/trim-newline))
 
 (defn- pull-repo [repo]
-  (println "pulling repo:" repo)
+  ;; just running git status for now, needs more testing
+
+  (let [branch (get-current-branch repo)
+        cmd (format "git -C %s status --short" repo)
+        res (sh {:dir repo} cmd)]
+
+    (println "pulling repo:" repo "branch:" branch)
+    {:repo repo
+     :exit (:exit res)
+     :out (:out res)
+     :err (:err res)})
+
   ;; (let [branch (get-current-branch repo)
   ;;       cmd (format "git pull --rebase --autostash origin %s" branch)
   ;;       res (sh {:dir repo} cmd)]
@@ -70,14 +82,6 @@
   ;;    :err (:err res)})
  ;; 
   )
-
-(defn git-status [repo]
-  (let [cmd (format "git -C %s status --short" repo)
-        res (sh {:dir repo} cmd)]
-    {:repo repo
-     :exit (:exit res)
-     :out (:out res)
-     :err (:err res)}))
 
 ;; 1. read config file
 (let [dir-entries (->> (read-config)
@@ -100,7 +104,7 @@
        (map str)
        (filter repo?)
        (filter clean?)
-       (pmap git-status)
+       (pmap pull-repo)
        (mapv println)
 
 ;;

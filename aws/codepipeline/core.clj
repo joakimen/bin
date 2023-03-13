@@ -49,7 +49,7 @@
 
   (def client (create-client))
 
-  (aws/invoke client {:op List})
+  (aws/invoke client {:op :ListPipelines})
   (list-pipelines client)
   (list-stages client "pl-123")
 
