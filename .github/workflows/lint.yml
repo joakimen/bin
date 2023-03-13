@@ -1,0 +1,15 @@
+name: lint with clj-kondo
+
+on: [push]
+
+jobs:
+  self-lint:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: DeLaGuardo/clojure-lint-action@master
+      with:
+        clj-kondo-args: --lint .
+        github_token: ${{ secrets.GITHUB_TOKEN }}
