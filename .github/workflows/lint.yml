@@ -1,4 +1,4 @@
-name: lint with clj-kondo
+name: lint - clj
 
 on: [push]
 
