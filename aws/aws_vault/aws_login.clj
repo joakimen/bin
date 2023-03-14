@@ -6,7 +6,7 @@
 (defn select-aws-profiles []
   (let [res (p/sh {:err :inherit} "select-aws-profiles")]
     (when (> (:exit res) 0)
-      (System/exit 1)) ;; probs just caught ctrl-c
+      (System/exit (:exit res))) ;; probs just caught ctrl-c
     (->> res :out str/trim str/split-lines)))
 
 (defn open-in-awschrome [profile]
