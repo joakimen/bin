@@ -1,10 +1,20 @@
 (ns file.select-project
   "select a project, filtered through fzf
    cd'ing to project must be done in parent process (bash, fish, etc)"
-  (:require [babashka.process :as p]
-            [clojure.string :as str]))
+  (:require [babashka.fs :as fs]
+            [babashka.process :as p]
+            [clojure.string :as str]
+            [clj-yaml.core :as clj-yaml]))
 
-(let [res (->> (p/pipeline (p/pb  "list-projects")
-                           (p/pb {:err :inherit} "fzf")) last deref)]
+(def config-file (str (fs/path (fs/xdg-config-home) "projects.yaml")))
+
+(let [settings (->> config-file slurp clj-yaml/parse-string :settings)
+      res (->> (p/pipeline (p/pb  "list-projects")
+                           (p/pb {:err :inherit} "fzf"
+                                 "--preview"
+                                 (or (:preview-cmd settings) "ls -1 {}")
+                                 "--height" "50%"))
+               last deref)]
+
   (when (= (:exit res) 0)
     (->> res :out slurp str/trim println)))
