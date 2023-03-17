@@ -26,6 +26,7 @@
   (p/process google-chrome-path
              "--no-first-run"
              "--start-maximized"
+             "--new-window"
              (str "--user-data-dir=" data-dir)
              (str "--disk-cache-dir=" cache-dir)
              aws-login-url))
