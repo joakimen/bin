@@ -1,6 +1,5 @@
 (ns obsidian.review
-  {:clj-kondo/config '{:linters {:unused-binding {:level :off}
-                                 :unresolved-symbol {:level :off}}}} ;; WIP
+  {:clj-kondo/ignore true} ;;calva isn't updated yet, but clj-kondo now ignores this
   "do a health-check on a local obsidian-vault and report problems
    - files named Unnamed - empty or less than 2 lines")
 
