@@ -13,8 +13,10 @@
       (System/exit (:exit result)))
     (->> result :out str/trim)))
 
+;; should receive a vararg of filenames and return true if any where found
 (defn repo-file-exists? [repo]
   (fn [file] (fs/exists? (fs/path repo file))))
+
 
 (defn detect
   "execute detector-function and return result"
@@ -32,14 +34,24 @@
       ;; e.g. a package.json-file ;; might not indicate it is a node project, 
       ;; as some projects use a few things from the node ecosystem alongside
       ;; their actual build tool, hence package.json is given a higher rank.
+      ;; 
+      ;; if we update file detection to check for multiple files per lang,
+      ;; the files should then have their own separate rank, and when considering
+      ;; the files that were actually found, the one with the highest rank must be
+      ;; considered when guessing project type
       project-types [{:type "maven"
                       :detector (fn [] (file-exists? "pom.xml"))
                       :rank 1}
                      {:type "go"
                       :detector (fn [] (file-exists? "go.mod"))
                       :rank 1}
-                     {:type "babashka"
+                     {:type "clojure" ;; call babashka-projects clojure for now
                       :detector (fn [] (file-exists? "bb.edn"))
+                      :rank 1}
+                     ;; :type should be unique, so this is a workaround until
+                     ;; file-exists? can check for multiple files
+                     {:type "clojure"
+                      :detector (fn [] (file-exists? "deps.edn"))
                       :rank 1}
                      {:type "node"
                       :detector (fn [] (file-exists? "package.json"))
