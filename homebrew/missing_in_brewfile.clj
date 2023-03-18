@@ -10,7 +10,9 @@
 (defn read-brewfile
   "read ~/.Brewfile, return content as vec"
   []
-  (->> (fs/path (fs/home) ".Brewfile") str slurp str/split-lines))
+  (->> (fs/path (fs/home) ".Brewfile") fs/read-all-lines))
+
+(read-brewfile)
 
 (defn list-installed
   "list installed brew formulas, return as vec"
