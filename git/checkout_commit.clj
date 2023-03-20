@@ -1,4 +1,4 @@
-(ns github.checkout-commit
+(ns git.checkout-commit
   "checkout a given revision using fzf"
   (:require [babashka.process :as p]
             [clojure.string :as str]))
