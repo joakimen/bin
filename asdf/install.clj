@@ -6,11 +6,10 @@
 ;; install asdf-plugins, filtered through fzf
 
 (defn run [& args]
-  (let [res (apply p/sh args)]
-    (when (> (:exit res) 0)
-      (->> res :err str/trim println)
-      (System/exit (:exit res)))
-    (->> res :out str/trim)))
+  (let [{:keys [out err exit]} (apply p/sh args)]
+    (when (not (zero? exit))
+      (throw (ex-info err {:babashka/exit exit})))
+    (cond (string? out) (str/trim out) :else "")))
 
 (defn list-languages []
   (->> (run "asdf" "plugin" "list")
@@ -22,12 +21,12 @@
        (assoc {} :lang lang :versions)))
 
 (defn fzf [s]
-  (let [res @(p/process ["fzf" "-m"]
-                        {:in s :err :inherit
-                         :out :string})]
-    (when (> (:exit res) 0)
-      (System/exit (:exit res)))
-    (->> res :out str/trim)))
+  (let [{:keys [out exit]} @(p/process ["fzf" "-m"]
+                                       {:in s :err :inherit
+                                        :out :string})]
+    (when (not (zero? exit))
+      (System/exit exit))
+    (cond (string? out) (str/trim out) :else "")))
 
 (let [all-langs (list-languages)
       all-versions (mapv #(future (list-versions %)) all-langs)
