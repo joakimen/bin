@@ -6,25 +6,23 @@
             [clj-yaml.core :as clj-yaml]
             [clojure.string :as str]))
 
+(defn die [& args]
+  (throw (ex-info (apply str args) {:babashka/exit 1})))
+
 (let [bin "fd"]
   (when (not (fs/which bin))
-    (println "missing required binary:" bin)
-    (System/exit 1)))
+    (die "missing required binary: " bin)))
 
 (def config-file (str (fs/path (fs/xdg-config-home) "projects.yaml")))
-
-(defn err-exit [& args]
-  (apply println args)
-  (System/exit 1))
 
 (defn read-required-file
   "return contents of file. throw and exit if missing or empty."
   [file-path]
   (when (or (not (fs/exists? file-path)) (str/blank? file-path))
-    (err-exit "error: no such file:" file-path))
+    (die "error: no such file: " file-path))
   (let [contents (slurp file-path)]
     (when (str/blank? contents)
-      (err-exit "error: file is empty:" file-path))
+      (die "error: file is empty: " file-path))
     contents))
 
 (defn parse-config
@@ -46,7 +44,7 @@
          settings :settings} (clj-yaml/parse-string contents)]
 
     (when (empty? project-root-entries)
-      (err-exit "error: no project-entries defined in config-file:" config-file))
+      (die "error: no project-entries defined in config-file: " config-file))
 
     {:project-roots (->> project-root-entries
                          (map (comp str fs/expand-home))
