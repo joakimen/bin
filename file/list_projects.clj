@@ -26,22 +26,24 @@
     contents))
 
 (defn parse-config
-  "parse contents of configuration file
+  "parse contents of configuration file.
 
-   project-roots:
-    - ensure at least one project-root is defined
-    - filter out invalid values (non-existing dirs etc)
- 
-   ignores:
-   - return empty vec by default, populate with optional entries from config-file
+   expects the following structure:
 
-   settings:
-     max-depth: recursion-depth when searching for repositories
+   project:
+     roots: (required)
+       - ~/some-project
+       - /home/moo/dev
+     settings: (optional)
+       - max-depth: int, recursion depth when travering roots for projects
+    ignores:
+       - node_modules
+       - venv
    "
   [contents]
-  (let [{project-root-entries :project-roots
+  (let [{project-root-entries :roots
          ignore-entries :ignores
-         settings :settings} (clj-yaml/parse-string contents)]
+         settings :settings} (:projects (clj-yaml/parse-string contents))]
 
     (when (empty? project-root-entries)
       (die "error: no project-entries defined in config-file: " config-file))
