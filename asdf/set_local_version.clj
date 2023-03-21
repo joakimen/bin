@@ -4,24 +4,24 @@
             [clojure.string :as str]))
 
 (defn fzf [s]
-  (let [res @(p/process ["fzf"]
-                        {:in s :err :inherit
-                         :out :string})]
-    (when (> (:exit res) 0)
-      (System/exit (:exit res)))
-    (->> res :out str/trim)))
+  (let [{:keys [out exit]}
+        @(p/process ["fzf"]
+                    {:in s :err :inherit
+                     :out :string})]
+    (when (not (zero? exit))
+      (System/exit exit))
+    (cond (string? out) (str/trim out) :else "")))
 
 (defn fzfv [v]
   (->> (str/join "\n" v)
        (fzf)
        (str/split-lines)))
 
-(defn run [cmd]
-  (let [res (p/sh cmd)]
-    (when (> (:exit res) 0)
-      (->> res :err str/trim println)
-      (System/exit (:exit res)))
-    (->> res :out str/trim)))
+(defn run [& args]
+  (let [{:keys [out err exit]} (apply p/sh args)]
+    (when (not (zero? exit))
+      (throw (ex-info err {:babashka/exit exit})))
+    (cond (string? out) (str/trim out) :else "")))
 
 (defn list-languages []
   (->> (run "asdf plugin list")
@@ -29,7 +29,7 @@
 
 (defn list-versions [lang]
   (let [versions (->>
-                  (run (str "asdf list " lang))
+                  (run "asdf" "list" lang)
                   (str/split-lines)
                   (mapv #(str/replace % #"[\s\*]" "")))]
     (assoc {} :lang lang :versions versions)))
