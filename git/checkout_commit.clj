@@ -3,9 +3,14 @@
   (:require [babashka.process :as p]
             [clojure.string :as str]))
 
-(let [res (p/sh {:err :inherit :out :string} "select-commit")]
-  (when (> (:exit res) 0)
-    (System/exit (:exit res)))
-  (let [revision (-> res :out str/trim)]
-    (println "checking out revision:" revision)
-    (p/shell "git" "checkout" revision)))
+(let [{:keys [out exit]} (p/sh {:err :inherit :out :string} "select-commit")]
+
+  (when-not (zero? exit)
+    (System/exit exit))
+
+  (when-not (string? out)
+    (throw (ex-info (str "expected sha: " out) {:babashka/exit 1})))
+
+  (let [sha (str/trim out)]
+    (println "checking out revision:" sha)
+    (p/shell "git" "checkout" sha)))
