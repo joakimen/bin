@@ -7,11 +7,10 @@
 (def google-chrome-path  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
 
 (defn run [& args]
-  (let [res (apply p/sh args)]
-    (when (> (:exit res) 0)
-      (some->> res :err str/trim println)
-      (System/exit (:exit res)))
-    (some->> res :out str/trim)))
+  (let [{:keys [out err exit]} (apply p/sh args)]
+    (when (not (zero? exit))
+      (throw (ex-info (str/trim err) {:babashka/exit exit})))
+    (str/trim out)))
 
 (defn create-login-link [profile]
   (run "aws-vault" "login" profile "--stdout" "--prompt" "osascript"))
