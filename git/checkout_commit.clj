@@ -1,16 +1,11 @@
 (ns git.checkout-commit
   "checkout a given revision using fzf"
-  (:require [babashka.process :as p]
-            [clojure.string :as str]))
+  (:require [babashka.process :as p]))
 
-(let [{:keys [out exit]} (p/sh {:err :inherit :out :string} "select-commit")]
-
+(let [{:keys [out exit]}
+      @(-> (p/process "list-commits")
+           (p/process ["fzf"] {:err :inherit
+                               :out :string}))]
   (when-not (zero? exit)
     (System/exit exit))
-
-  (when-not (string? out)
-    (throw (ex-info (str "expected sha: " out) {:babashka/exit 1})))
-
-  (let [sha (str/trim out)]
-    (println "checking out revision:" sha)
-    (p/shell "git" "checkout" sha)))
+  (p/shell {:continue true} "git" "checkout" (re-find #"^[a-f0-9]+" out)))
