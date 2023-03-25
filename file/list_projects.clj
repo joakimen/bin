@@ -19,10 +19,10 @@
   "return contents of file. throw and exit if missing or empty."
   [file-path]
   (when (or (not (fs/exists? file-path)) (str/blank? file-path))
-    (die "error: no such file: " file-path))
+    (die "error: missing config file: " file-path))
   (let [contents (slurp file-path)]
     (when (str/blank? contents)
-      (die "error: file is empty: " file-path))
+      (die "error: config file is empty: " file-path))
     contents))
 
 (defn parse-config
@@ -77,11 +77,13 @@
                    :excludes (:ignores opts)
                    :settings (:settings opts)}))))
 
-(->> (read-required-file config-file)
-     (parse-config)
-     (resolve-repos)
-     (flatten)
-     (mapv println))
+(let [config (-> config-file read-required-file parse-config)
+      repos (-> config resolve-repos flatten doall)]
+
+  (when (empty? repos)
+    (die "couldn't resolve any repos from config: " config-file))
+
+  (println repos))
 
 (comment
 
