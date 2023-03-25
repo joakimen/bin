@@ -83,7 +83,7 @@
   (when (empty? repos)
     (die "couldn't resolve any repos from config: " config-file))
 
-  (println repos))
+  (mapv println repos))
 
 (comment
 
