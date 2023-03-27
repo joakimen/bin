@@ -4,17 +4,16 @@
             [clojure.string :as str]))
 
 (defn select-buckets []
-  (let [res (p/sh {:err :inherit} "select-buckets")]
-    (when (> (:exit res) 0)
-      (System/exit (:exit res)))
-    (->> res :out str/trim str/split-lines)))
+  (let [{:keys [out exit]} (p/sh {:err :inherit} "select-buckets")]
+    (when-not (zero? exit)
+      (System/exit exit))
+    (->> out str/trim str/split-lines)))
 
 (defn download-bucket [bucket]
-  (let [res (p/sh "aws" "s3" "sync" bucket (str/replace-first bucket "s3://" "s3-"))]
-    (when (> (:exit res) 0)
-      (println (:err res))
-      (System/exit (:exit res)))
-    (->> res :out str/trim)))
+  (let [{:keys [out err exit]} (p/sh "aws" "s3" "sync" bucket (str/replace-first bucket "s3://" "s3-"))]
+    (when-not (zero? exit)
+      (throw (ex-info (str/trim err) {:babashka/exit exit}))
+      (->> out str/trim))))
 
 (let [buckets (select-buckets)]
   (println (str "downloading buckets:\n" (str/join "\n" buckets)))
