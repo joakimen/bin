@@ -4,12 +4,11 @@
             [clojure.string :as str]
             [edamame.core :as eda]))
 
-(defn run [cmd]
-  (let [res (p/sh cmd)]
-    (when (> (:exit res) 0)
-      (->> res :err str/trim println)
-      (System/exit (:exit res)))
-    (->> res :out str/trim)))
+(defn run [& args]
+  (let [{:keys [out err exit]} (apply p/sh args)]
+    (when-not (zero? exit)
+      (throw (ex-info (str/trim err) {:babashka/exit exit})))
+    (str/trim out)))
 
 (defn list-bastion-instances []
   (let [instances (run "list-bastion-instances")]

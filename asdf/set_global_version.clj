@@ -23,8 +23,6 @@
                     {:in s :err :inherit
                      :out :string})]
     (when (not (zero? exit))
-      ;; this is usually because of a Ctrl-C and doesnt
-      ;; warrant printing stderrr
       (System/exit exit))
     (cond (string? out) (str/trim out) :else "")))
 
