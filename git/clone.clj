@@ -32,23 +32,22 @@ usage:
   returns newline-separated string with results
   list  see [[github-username]]"
   [s]
-  (let [res @(process ["fzf" "-m"]
-                      {:in s :err :inherit
-                       :out :string})]
-    (when (> (:exit res) 0) ;; probably just a ctrl-c
-      (System/exit (:exit res)))
-    (-> res :out str/trim)))
+  (let [{:keys [out exit]} @(process ["fzf" "-m"]
+                                     {:in s :err :inherit
+                                      :out :string})]
+    (when-not (zero? exit)
+      (System/exit exit))
+    (str/trim out)))
 
 (defn run
   "run shell command.
    on success, return stdout
    on error, print stderr and exit with exit-code from shell"
   [cmd]
-  (let [res (sh cmd)]
-    (when (> (:exit res) 0)
-      (println (:err res))
-      (System/exit (:exit res)))
-    (-> res :out str/trim)))
+  (let [{:keys [out err exit]} (sh cmd)]
+    (when-not (zero? exit)
+      (throw (ex-info (str/trim err) {:babashka/exit exit})))
+    (str/trim out)))
 
 (defmulti search (fn [repo] (:type repo)))
 
@@ -106,12 +105,12 @@ usage:
    for the clone operation"
   [repo]
   (let [repo-dir (str repo-root "/" repo)
-        res (sh (format "gh repo clone %s %s" repo repo-dir))
-        msg (str/trim (if (= (:exit res) 0)
-                        (:out res)
-                        (:err res)))]
+        {:keys [exit out err]} (sh (format "gh repo clone %s %s" repo repo-dir))
+        msg (str/trim (if (zero? exit)
+                        out
+                        err))]
     {:repo repo
-     :exit (:exit res)
+     :exit exit
      :msg msg}))
 
 (let [opts (parse-opts *command-line-args*)

@@ -7,5 +7,5 @@
 
 (let [file (-> (p/process "fd" "-t" "file")
                (p/process {:err :inherit} "fzf") deref :out slurp)]
-  (when (not (str/blank? file))
-    (println (-> file fs/absolutize fs/parent str))))
+  (when-not (str/blank? file)
+    (-> file fs/absolutize fs/parent str println)))

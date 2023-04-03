@@ -5,16 +5,14 @@
             [clojure.string :as str]))
 
 (defn run [cmd]
-  (let [res (p/sh cmd)]
-    (when (> (:exit res) 0)
-      (->> res :err str/trim println)
-      (System/exit (:exit res)))
-    (->> res :out str/trim)))
+  (let [{:keys [exit out err]} (p/sh cmd)]
+    (when-not (zero? exit)
+      (throw (ex-info (str/trim err) {:babashka/exit exit})))
+    (str/trim out)))
 
 (defn list-functions []
   (let [functions (run "aws lambda list-functions")]
-    (->> (json/parse-string functions true)
-         :Functions)))
+    (:Functions (json/parse-string functions true))))
 
 (->> (list-functions)
      (map :FunctionName)

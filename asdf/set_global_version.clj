@@ -7,7 +7,7 @@
 
 (defn run [& args]
   (let [{:keys [out err exit]} (apply p/sh args)]
-    (when (not (zero? exit))
+    (when-not (zero? exit)
       (throw (ex-info err {:babashka/exit exit})))
     (cond (string? out) (str/trim out) :else "")))
 
@@ -22,7 +22,7 @@
         @(p/process ["fzf" "-m"]
                     {:in s :err :inherit
                      :out :string})]
-    (when (not (zero? exit))
+    (when-not (zero? exit)
       (System/exit exit))
     (cond (string? out) (str/trim out) :else "")))
 

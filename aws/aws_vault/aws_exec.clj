@@ -4,9 +4,9 @@
             [clojure.string :as str]))
 
 (defn select-aws-profile []
-  (let [res (p/sh {:err :inherit} "select-aws-profiles")]
-    (when (> (:exit res) 0)
+  (let [{:keys [exit out]} (p/sh {:err :inherit} "select-aws-profiles")]
+    (when-not (zero? exit)
       (System/exit 1)) ;; probs just caught ctrl-c
-    (->> res :out str/trim str/split-lines first)))
+    (->> out str/trim str/split-lines first)))
 
 (p/shell "aws-vault" "exec" (select-aws-profile))

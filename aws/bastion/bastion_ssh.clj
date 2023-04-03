@@ -15,12 +15,12 @@
     (eda/parse-string instances)))
 
 (defn fzf [s]
-  (let [res @(p/process ["fzf" "-m"]
-                        {:in s :err :inherit
-                         :out :string})]
-    (when (> (:exit res) 0)
-      (System/exit (:exit res)))
-    (->> res :out str/trim)))
+  (let [{:keys [out exit]} @(p/process ["fzf" "-m"]
+                                       {:in s :err :inherit
+                                        :out :string})]
+    (when-not (zero? exit)
+      (System/exit exit))
+    (str/trim out)))
 
 (defn ssm-connect [instance]
   (let [instanceid (:instanceid instance)]

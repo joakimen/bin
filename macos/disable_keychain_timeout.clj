@@ -6,12 +6,12 @@
 ;; disable automatic lock on one or more keychains
 
 (defn fzf [s]
-  (let [res @(p/process ["fzf" "-m"]
-                        {:in s :err :inherit
-                         :out :string})]
-    (when (> (:exit res) 0)
-      (System/exit (:exit res)))
-    (->> res :out str/trim)))
+  (let [{:keys [exit out]} @(p/process ["fzf" "-m"]
+                                       {:in s :err :inherit
+                                        :out :string})]
+    (when-not (zero? exit)
+      (System/exit exit))
+    (str/trim out)))
 
 (defn fzfv [v]
   (->> (str/join "\n" v)
@@ -22,4 +22,6 @@
       all-keychains (->> (fs/list-dir keychain-dir)
                          (filter #(str/ends-with? % "keychain-db")))
       chosen-keychains (fzfv all-keychains)]
-  (pmap #(p/shell "security" "set-keychain-settings" %) chosen-keychains))
+  (->> (chosen-keychains)
+       (pmap #(p/shell "security" "set-keychain-settings" %))
+       (doall)))

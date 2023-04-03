@@ -4,19 +4,18 @@
             [clojure.string :as str]))
 
 (defn list-aws-profiles []
-  (let [res (p/sh "list-aws-profiles")]
-    (when (> (:exit res) 0)
-      (some->> res :err str/trim println)
-      (System/exit (:exit res)))
-    (->> res :out str/trim)))
+  (let [{:keys [exit err out]} (p/sh "list-aws-profiles")]
+    (when-not (zero? exit)
+      (throw (ex-info (str/trim err) {:babashka/exit exit})))
+    (str/trim out)))
 
 (defn fzf [s]
-  (let [res @(p/process ["fzf" "-m"]
-                        {:in s :err :inherit
-                         :out :string})]
-    (when (> (:exit res) 0)
-      (System/exit (:exit res)))
-    (->> res :out str/trim)))
+  (let [{:keys [exit out]} @(p/process ["fzf" "-m"]
+                                       {:in s :err :inherit
+                                        :out :string})]
+    (when-not (zero? exit)
+      (System/exit exit))
+    (str/trim out)))
 
 (->> (list-aws-profiles)
      (fzf)

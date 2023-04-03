@@ -4,10 +4,10 @@
             [clojure.string :as str]))
 
 (defn select-aws-profiles []
-  (let [res (p/sh {:err :inherit} "select-aws-profiles")]
-    (when (> (:exit res) 0)
-      (System/exit (:exit res))) ;; probs just caught ctrl-c
-    (->> res :out str/trim str/split-lines)))
+  (let [{:keys [exit out]} (p/sh {:err :inherit} "select-aws-profiles")]
+    (when-not (zero? exit)
+      (System/exit exit))
+    (-> out str/trim str/split-lines)))
 
 (defn open-in-awschrome [profile]
   (p/shell "aws-chrome" profile))

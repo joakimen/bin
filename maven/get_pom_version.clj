@@ -1,4 +1,4 @@
-#!/usr/bin/env bjb
+#!/usr/bin/env bb
 (ns maven.get-pom-version
   (:require [clojure.data.xml :as xml]
             [clojure.string :as str]
@@ -19,7 +19,7 @@
        tag-content-str))
 
 (let [pom (or (first *command-line-args*) "pom.xml")]
-  (when (not (fs/exists? pom))
+  (when-not (not (fs/exists? pom))
     (println (str pom ": No such file or directory"))
     (System/exit 1))
   (-> pom get-version println))

@@ -9,12 +9,12 @@
 (def config-file (str (fs/path (fs/xdg-config-home) "projects.yaml")))
 
 (let [settings (->> config-file slurp clj-yaml/parse-string :settings)
-      res (->> (p/pipeline (p/pb  "list-projects")
-                           (p/pb {:err :inherit} "fzf"
-                                 "--preview"
-                                 (or (:preview-cmd settings) "ls -1 {}")
-                                 "--height" "50%"))
-               last deref)]
+      {:keys [exit out]} (->> (p/pipeline (p/pb  "list-projects")
+                                          (p/pb {:err :inherit} "fzf"
+                                                "--preview"
+                                                (or (:preview-cmd settings) "ls -1 {}")
+                                                "--height" "50%"))
+                              last deref)]
 
-  (when (= (:exit res) 0)
-    (->> res :out slurp str/trim println)))
+  (when-not (zero? exit)
+    (->> out slurp str/trim println)))

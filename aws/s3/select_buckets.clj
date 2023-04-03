@@ -4,19 +4,18 @@
             [clojure.string :as str]))
 
 (defn fzf [s]
-  (let [res @(p/process ["fzf" "-m"]
-                        {:in s :err :inherit
-                         :out :string})]
-    (when (> (:exit res) 0)
-      (System/exit (:exit res)))
-    (->> res :out str/trim)))
+  (let [{:keys [exit out]} @(p/process ["fzf" "-m"]
+                                       {:in s :err :inherit
+                                        :out :string})]
+    (when-not (zero? exit)
+      (System/exit exit))
+    (str/trim out)))
 
 (defn run [cmd]
-  (let [res (p/sh cmd)]
-    (when (> (:exit res) 0)
-      (->> res :err str/trim println)
-      (System/exit (:exit res)))
-    (->> res :out str/trim)))
+  (let [{:keys [exit err out]} (p/sh cmd)]
+    (when-not (zero? exit)
+      (throw (ex-info (str/trim err) {:babashka/exit exit})))
+    (str/trim out)))
 
 (->> (run "list-buckets")
      (fzf)

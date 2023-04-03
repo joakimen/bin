@@ -3,21 +3,18 @@
             [cheshire.core :as json]
             [clojure.string :as str]))
 
-(defn run [cmd]
-  (let [res (p/sh cmd)]
-    (when (> (:exit res) 0)
-      (->> res :err str/trim println)
-      (System/exit (:exit res)))
-    (->> res :out str/trim)))
+(defn run [& args]
+  (let [{:keys [out err exit]} (apply p/sh args)]
+    (when-not (zero? exit)
+      (throw (ex-info (str/trim err) {:babashka/exit exit})))
+    (str/trim out)))
 
 (defn parse-json [s]
   (json/parse-string s true))
 
-(defn list-buckets []
-  (let [res (run "aws s3api list-buckets")]
-    (->> (parse-json res)
-         :Buckets
-         (map :Name)
-         (map #(str "s3://" %)))))
-
-(doall (map println (list-buckets)))
+(->> (run "aws s3api list-buckets")
+     (parse-json)
+     :Buckets
+     (map :Name)
+     (map #(str "s3://" %))
+     (mapv println))

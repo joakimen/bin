@@ -8,18 +8,18 @@
         @(p/process ["fzf"]
                     {:in s :err :inherit
                      :out :string})]
-    (when (not (zero? exit))
+    (when-not (zero? exit)
       (System/exit exit))
     (cond (string? out) (str/trim out) :else "")))
 
 (defn fzfv [v]
-  (->> (str/join "\n" v)
+            (->> (str/join "\n" v)
        (fzf)
        (str/split-lines)))
 
 (defn run [& args]
   (let [{:keys [out err exit]} (apply p/sh args)]
-    (when (not (zero? exit))
+    (when-not (zero? exit)
       (throw (ex-info err {:babashka/exit exit})))
     (cond (string? out) (str/trim out) :else "")))
 
@@ -35,10 +35,10 @@
     (assoc {} :lang lang :versions versions)))
 
 (let [all-langs (list-languages)
-      installed-versions (mapv #(future (list-versions %)) all-langs)
+      installed-versions (pmap list-versions all-langs)
       lang (->> all-langs fzfv first)
       version (->> installed-versions
-                   (map deref)
                    (filter #(= (:lang %) lang))
+                   doall
                    first :versions (str/join "\n") fzf)]
   (p/shell "asdf" "local" lang version))

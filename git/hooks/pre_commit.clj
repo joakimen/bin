@@ -21,6 +21,7 @@
   (p/shell "go" "test" "-v"))
 
 (defmethod action ["clojure"] [_]
+  ;;(p/shell "cljfmt" "fix" ".")
   (p/shell "clj-kondo" "--lint" "."))
 
 ;; default

@@ -4,12 +4,10 @@
          '[clojure.string :as str])
 
 (defn run [cmd]
-  (let [result (p/sh cmd)
-        err (:err result)
-        exit (:exit result)]
-    (when (not (zero? exit))
-      (throw (ex-info err {:babashka/exit exit})))
-    (:out result)))
+  (let [{:keys [err exit out]} (p/sh cmd)]
+    (when-not (zero? exit)
+      (throw (ex-info (str/trim err) {:babashka/exit exit})))
+    (str/trim out)))
 
 (defn fzf [s]
   (let [proc (p/process ["fzf" "-m"]

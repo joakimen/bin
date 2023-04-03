@@ -10,7 +10,7 @@
   (throw (ex-info (apply str args) {:babashka/exit 1})))
 
 (let [bin "fd"]
-  (when (not (fs/which bin))
+  (when-not (fs/which bin)
     (die "missing required binary: " bin)))
 
 (def config-file (str (fs/path (fs/xdg-config-home) "projects.yaml")))
@@ -70,12 +70,12 @@
          (mapv (comp str fs/parent)))))
 
 (defn resolve-repos
-  "read a cleaned-up version of project-config and return a vec of git repos from the defined roots"
-  [opts]
-  (->> (:project-roots opts)
+  "receives a cleaned-up version of project-config and return a vec of git repos from the defined roots"
+  [{:keys [ignores settings project-roots]}]
+  (->> project-roots
        (pmap #(fd {:dir %
-                   :excludes (:ignores opts)
-                   :settings (:settings opts)}))))
+                   :excludes ignores
+                   :settings settings}))))
 
 (let [config (-> config-file read-required-file parse-config)
       repos (-> config resolve-repos flatten doall)]

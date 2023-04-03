@@ -37,10 +37,10 @@
 (let [client (create-client)
       pipelines (list-pipelines client)]
   (->> pipelines
-      ;;(map #(future (list-stages client %))) 
-       (map #(future (last-execution client %)))
-       (map deref)
+      ;;  (pmap #(list-stages client %))
+       (pmap #(last-execution client %))
        (edn-to-json)
+       (doall)
        (println)))
 
 (comment

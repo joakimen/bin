@@ -7,7 +7,7 @@
 
 (defn run [& args]
   (let [{:keys [out err exit]} (apply p/sh args)]
-    (when (not (zero? exit))
+    (when-not (zero? exit)
       (throw (ex-info err {:babashka/exit exit})))
     (cond (string? out) (str/trim out) :else "")))
 
@@ -24,12 +24,12 @@
   (let [{:keys [out exit]} @(p/process ["fzf" "-m"]
                                        {:in s :err :inherit
                                         :out :string})]
-    (when (not (zero? exit))
+    (when-not (zero? exit)
       (System/exit exit))
     (cond (string? out) (str/trim out) :else "")))
 
 (let [all-langs (list-languages)
-      all-versions (mapv #(future (list-versions %)) all-langs)
+      all-versions (->> all-langs (pmap #(list-versions %)) doall)
       lang (->> all-langs (str/join "\n") fzf)
       version (->> all-versions (map deref) (filter #(= (:lang %) lang)) first :versions (str/join "\n") fzf)]
   (println "Installing" lang version)

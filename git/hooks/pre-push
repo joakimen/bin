@@ -3,11 +3,10 @@
          '[clojure.string :as str])
 
 (defn run [cmd]
-  (let [result (p/sh cmd)]
-    (when (> (:exit result) 0)
-      (->> result :err str/trim println)
-      (System/exit (:exit result)))
-    (->> result :out str/trim)))
+  (let [{:keys [out err exit]} (p/sh cmd)]
+    (when-not (zero? exit)
+      (throw (ex-info (str/trim err) {:babashka/exit exit})))
+    (str/trim out)))
 
 ;; define multimethod
 (defmulti action (fn [project] [(:type project)]))

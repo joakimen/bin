@@ -4,11 +4,11 @@
             [clojure.string :as str]
             [babashka.fs :as fs]))
 
-(def google-chrome-path  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
+(def google-chrome-path "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
 
 (defn run [& args]
   (let [{:keys [out err exit]} (apply p/sh args)]
-    (when (not (zero? exit))
+    (when-not (zero? exit)
       (throw (ex-info (str/trim err) {:babashka/exit exit})))
     (str/trim out)))
 
