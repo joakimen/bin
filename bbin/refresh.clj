@@ -10,7 +10,7 @@
 
 (let [ignores ["obsidian/review.clj"]
       remotes ["https://raw.githubusercontent.com/borkdude/tools/main/cljfmt.clj"]
-      locals (->> (fs/glob "." "**.clj")
+      locals (->> (fs/glob (-> *file* fs/parent fs/parent) "**.clj")
                   (map str)
                   (filter #(not (in? ignores %))))
       to_install (distinct (into remotes locals))]
