@@ -9,14 +9,14 @@
       (throw (ex-info (str/trim err) {:babashka/exit exit})))
     (str/trim out)))
 
-;; define multimethod to run hook based on project type
-(defmulti action (fn [x] x))
+;; 
+(defmulti action
+  "commands to run on pre-commit events for a given language"
+  (fn [lang] lang))
 
-;; maven
 (defmethod action "maven" [_]
   (p/shell "mvn" "spotless:check"))
 
-;; go
 (defmethod action "go" [_]
   (p/shell "go" "test" "-v"))
 
