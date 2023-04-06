@@ -9,7 +9,6 @@
       (throw (ex-info (str/trim err) {:babashka/exit exit})))
     (str/trim out)))
 
-;; 
 (defmulti action
   "commands to run on pre-commit events for a given language"
   (fn [lang] lang))
