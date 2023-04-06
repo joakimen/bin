@@ -54,11 +54,7 @@
       project (->> projects-found
                    (sort #(compare (project-rank %1) (project-rank %2))) ;; reverse, highest rank first
                    first)]
-  (when (nil? project)
-    (let [err-msg (str "could not determine project-type for: " (fs/cwd) ", supported project-types: " (str/join ", " (->> project-types (map :type))))]
-      (throw (ex-info err-msg {:babashka/exit 1}))))
-  (println (:type project)))
-
+  (println (or (:type project) "unknown")))
 
 (comment
   (let [projects [{:type "clojure"
