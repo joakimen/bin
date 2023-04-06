@@ -10,32 +10,26 @@
     (str/trim out)))
 
 ;; define multimethod to run hook based on project type
-(defmulti action (fn [project] [(:type project)]))
+(defmulti action (fn [x] x))
 
 ;; maven
-(defmethod action ["maven"] [_]
+(defmethod action "maven" [_]
   (p/shell "mvn" "spotless:check"))
 
 ;; go
-(defmethod action ["go"] [_]
+(defmethod action "go" [_]
   (p/shell "go" "test" "-v"))
 
-(defmethod action ["clojure"] [_]
+(defmethod action "clojure" [_]
   (p/shell "fd" "-e" "clj" "-x" "cljfmt" "fix")
   (p/shell "clj-kondo" "--lint" "."))
 
-;; default
-(defmethod action :default [project]
-  (throw (IllegalArgumentException.
-          (str "unsupported project type: " project))))
+;; default - noop
+(defmethod action :default [_])
 
-(action {:type (run "guess-project")})
+(action (run "guess-project"))
 
 (comment
-  (action {:type "maven"})
-
-  (let [project-type (run "guess-project")]
-    (println "project:" project-type))
-  ;; project: clojure
- ;; 
+  (run "guess-project") ;; => clojure
+  ;;
   )
