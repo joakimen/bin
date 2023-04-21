@@ -3,7 +3,8 @@
             [clojure.pprint :as pprint]
             [clojure.string :as str]
             [clojure.walk :refer [keywordize-keys]]
-            [com.grzm.awyeah.client.api :as aws]))
+            [com.grzm.awyeah.client.api :as aws]
+            [doric.core :as doric]))
 
 ;; list sqs queues and their visible/hidden messages
 ;; - pass in -a/--all to list empty queues
@@ -50,17 +51,20 @@
 
   (->> filtered
        (sort-by (juxt :visible :invisible))
-       (pprint/print-table)))
+       (doric/table)
+       (println)))
 
 (comment
 
   (def client (create-client))
   (def queues (list-queues client))
 
+
   (let [messages (pmap #(get-queue-messages client %) queues)]
     (->> messages
          (sort-by (juxt :visible :invisible))
-         (pprint/print-table)))
+         (doric/table)
+         (println)))
 
   (aws/doc client :GetQueueAttributes)
 
