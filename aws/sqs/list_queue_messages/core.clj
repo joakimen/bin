@@ -1,6 +1,5 @@
 (ns aws.sqs.list-queue-messages.core
   (:require [babashka.cli :as cli]
-            [clojure.pprint :as pprint]
             [clojure.string :as str]
             [clojure.walk :refer [keywordize-keys]]
             [com.grzm.awyeah.client.api :as aws]
