@@ -1,0 +1,2 @@
+{:paths ["."]
+ :bbin/bin {obsidian-doctor {:main-opts ["-f" "main.clj"]}}}
