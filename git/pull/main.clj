@@ -40,11 +40,14 @@
   [s n]
   (subs s 0 (min (count s) n)))
 
+(defn fmt-msg [msg]
+  (-> msg str/trim str/split-lines first (trunc 40)))
+
 (let [res (->> (list-projects)
                (filter is-clean?)
                (pmap pull-repo)
                (map #(update % :repo parse-repo-shortname)) ;; shorten name for printing
-               (map #(assoc % :err (if (zero? (:exit %)) "" (trunc (:err %) 40))))
+               (map #(assoc % :err (if (zero? (:exit %)) "" (fmt-msg (:err %)))))
                (doall))]
   (println (doric/table [:repo :exit :err] res)))
 
