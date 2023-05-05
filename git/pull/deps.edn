@@ -1,0 +1,2 @@
+{:deps {io.github.joakimen/pull {:local/root "."}
+        doric/doric {:mvn/version "0.9.0"}}}

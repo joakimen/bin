@@ -1,0 +1,2 @@
+{:bbin/bin {pull-projects {:main-opts ["-f" "main.clj"]}}
+ :deps {io.github.joakimen/pull {:local/root "."}}}

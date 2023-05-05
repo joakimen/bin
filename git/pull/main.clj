@@ -1,9 +1,10 @@
 #!/usr/bin/env bb
-(ns git.pull
-  "WIP - ebase-pull all tracked repos. dirty repos are skipped"
+(ns git.pull.main
+  "WIP - rebase-pull all tracked repos. dirty repos are skipped"
   (:require [babashka.process :refer [sh]]
             [clojure.pprint :as pprint]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [doric.core :as doric]))
 
 (defn run [& args]
   (let [{:keys [out err exit]} (apply sh args)]
@@ -26,7 +27,7 @@
 (defn- pull-repo [repo]
   (let [branch (get-current-branch repo)]
     (println "pulling repo:" repo "branch:" branch)
-    (assoc (select-keys (sh "git" "-C" repo "pull" "--rebase" "--autostash" "origin" branch) [:out :err :exit]) :repo repo)))
+    (assoc (select-keys (sh "git" "-C" repo "pull" "--rebase" "--autostash" "origin" branch) [:err :exit]) :repo repo)))
 
 (defn parse-repo-shortname [s]
   (let [pat #".*/([a-zA-Z0-9]+/[a-zA-Z0-9-]+)$"
@@ -35,13 +36,17 @@
       (throw (ex-info (str "failed to parse repo shortname from: " s) {:babashka/exit 1})))
     res))
 
-(->> (list-projects)
-     (filter is-clean?)
-     (pmap pull-repo)
-     (map #(update % :repo parse-repo-shortname)) ;; shorten name for printing
-     (map #(dissoc % :out :err)) ;; until we have a better way to print this
-     (doall)
-     (pprint/print-table))
+(defn trunc
+  [s n]
+  (subs s 0 (min (count s) n)))
+
+(let [res (->> (list-projects)
+               (filter is-clean?)
+               (pmap pull-repo)
+               (map #(update % :repo parse-repo-shortname)) ;; shorten name for printing
+               (map #(assoc % :err (if (zero? (:exit %)) "" (trunc (:err %) 40))))
+               (doall))]
+  (println (doric/table [:repo :exit :err] res)))
 
 (comment
 
@@ -54,6 +59,5 @@
        (map #(dissoc % :out :err))
        (doall)
        (pprint/print-table))
-
  ;; 
   )
