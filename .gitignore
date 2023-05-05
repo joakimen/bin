@@ -10,3 +10,5 @@ chezmoi
 venv
 .cpcache
 .envrc
+
+*.code-workspace
