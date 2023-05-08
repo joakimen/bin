@@ -1,0 +1,2 @@
+{:bbin/bin {list-project-branches {:main-opts ["-f" "main.clj"]}}
+ :deps {io.github.joakimen/list-project-branches {:local/root "."}}}
