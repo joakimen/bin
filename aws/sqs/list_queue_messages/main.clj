@@ -1,4 +1,4 @@
-(ns aws.sqs.list-queue-messages.core
+(ns aws.sqs.list-queue-messages.main
   (:require [babashka.cli :as cli]
             [clojure.string :as str]
             [clojure.walk :refer [keywordize-keys]]
