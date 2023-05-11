@@ -50,7 +50,7 @@
 
   (->> filtered
        (sort-by (juxt :visible :invisible))
-       (doric/table)
+       (doric/table [:queuename :visible :invisible])
        (println)))
 
 (comment
