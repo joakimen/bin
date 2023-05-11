@@ -49,7 +49,7 @@
       filtered (if show-empty messages (filter #(or (> (:visible %) 0) (> (:invisible %) 0)) messages))]
 
   (->> filtered
-       (sort-by (juxt :visible :invisible))
+       (sort-by :queueName)
        (doric/table [:queueName :visible :invisible])
        (println)))
 
