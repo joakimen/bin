@@ -1,4 +1,4 @@
-(ns run-crawler "runs an aws crawler and waits for completion"
+(ns start-crawler "starts an aws crawler and waits for completion"
     (:require [clojure.string :as str]
               [babashka.process :as p]
               [cheshire.core :as json]
