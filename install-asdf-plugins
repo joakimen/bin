@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-while read -r plugin; do
-    printf "Installing plugin: %s..\n" "$plugin"
-    asdf plugin add "$plugin"
-done <"$XDG_CONFIG_HOME/asdf/plugins"
-printf "\nDone.\n"
