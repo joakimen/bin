@@ -13,7 +13,7 @@
     (cond (string? out) (str/trim out) :else "")))
 
 (defn fzfv [v]
-            (->> (str/join "\n" v)
+  (->> (str/join "\n" v)
        (fzf)
        (str/split-lines)))
 
