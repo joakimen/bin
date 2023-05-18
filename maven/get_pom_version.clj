@@ -19,7 +19,6 @@
        tag-content-str))
 
 (let [pom (or (first *command-line-args*) "pom.xml")]
-  (when-not (not (fs/exists? pom))
-    (println (str pom ": No such file or directory"))
-    (System/exit 1))
+  (when-not (fs/exists? pom)
+    (throw (ex-info (str pom ": No such file or directory") {:babashka/exit 1})))
   (-> pom get-version println))

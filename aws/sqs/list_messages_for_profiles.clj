@@ -13,8 +13,7 @@
 (let [required ["aws-vault" "aws"]
       missing (filterv #(not (fs/which %)) required)]
   (when (not-empty missing)
-    (println "missing binaries:" missing)
-    (System/exit 1)))
+    (throw (ex-info "missing binaries" {:missing missing}))))
 
 (defn parse-json [s]
   (json/parse-string s true))
