@@ -1,4 +1,4 @@
-#!/usr/bin/env bb
+(ns todoist.todoist-get-activity)
 
 ;; Lists all added/completed todoist-tasks last 24 hours
 ;; Expects env var $TODOIST_TOKEN
