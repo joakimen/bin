@@ -11,11 +11,8 @@
 (defn getenv
   "get env var, err-exit if var is unset"
   [name]
-  (let [token (System/getenv name)]
-    (when (empty? token)
-      (println "required env var is not set:" name)
-      (System/exit 1))
-    token))
+  (or (System/getenv name)
+      (throw (ex-info (str "env var " name " is unset") {:babashka/exit 1}))))
 
 (defn query-todoist
   "fetch activity-log from todoist"
