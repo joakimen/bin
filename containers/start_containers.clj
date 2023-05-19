@@ -19,10 +19,10 @@
       (System/exit exit))))
 
 
-(defn list-startable-containers []
+(defn list-stopped-containers []
   (edn/read-string (run "list-stopped-containers")))
 
-(->> (list-startable-containers)
+(->> (list-stopped-containers)
      (mapv :Names)
      (fzfm)
      (pmap #(p/shell "docker" "start" %))
