@@ -1,4 +1,4 @@
-(ns containers.purge-untagged-images
+(ns docker.purge-untagged-images
   (:require [babashka.process :as p]
             [clojure.edn :as edn]
             [clojure.string :as str]

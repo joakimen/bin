@@ -1,4 +1,4 @@
-(ns containers.list-containers
+(ns docker.list-containers
   "get docker containers from json and return as edn"
   (:require [babashka.process :as p]
             [cheshire.core :as json]

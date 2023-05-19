@@ -1,4 +1,4 @@
-(ns containers.list-images
+(ns docker.list-images
   (:require [babashka.process :as p]
             [cheshire.core :as json]
             [clojure.string :as str]))
