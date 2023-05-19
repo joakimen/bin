@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-set -e
-
-# Starts a container with a given docker-image
-
-list-images | xargs docker run
