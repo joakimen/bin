@@ -1,4 +1,4 @@
-(ns containers.get-startable-containers
+(ns containers.list-startable-containers
   (:require [babashka.process :as p]
             [clojure.edn :as edn]
             [clojure.string :as str]))
