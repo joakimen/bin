@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-set -o pipefail
-
-docker images --format "{{.Repository}}:{{.Tag}}" | rg -v "<none>"
