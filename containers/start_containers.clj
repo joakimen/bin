@@ -20,7 +20,7 @@
 
 
 (defn list-startable-containers []
-  (edn/read-string (run "list-startable-containers")))
+  (edn/read-string (run "list-stopped-containers")))
 
 (->> (list-startable-containers)
      (mapv :Names)
