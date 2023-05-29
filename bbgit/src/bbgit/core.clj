@@ -49,6 +49,3 @@
         (println "Deleting branch" b)
         (g/delete-branch b))
       (println "Done."))))
-
-(defn- on-feature-branch? []
-  (not-any? #(= (g/current-branch) %) ["main" "master" "develop"]))
