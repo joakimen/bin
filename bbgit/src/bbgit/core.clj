@@ -42,13 +42,13 @@
   (let [branches (g/list-branches)
         to-delete (-> (fzf {:multi true
                             :in branches}))]
-    (when (empty? branches)
+    (when (empty? to-delete)
       (die "no branches selected"))
     (println "Will delete branches")
-    (doseq [b branches]
+    (doseq [b to-delete]
       (println "-" b))
     (when (gum/confirm)
-      (doseq [b branches]
+      (doseq [b to-delete]
         (println "Deleting branch" b)
         (g/delete-branch b))
       (println "Done."))))
