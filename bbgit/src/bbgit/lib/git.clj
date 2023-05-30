@@ -5,9 +5,6 @@
 (defn list-branches []
   (str/split-lines (sh "git for-each-ref --format='%(refname:short)' refs/heads")))
 
-(defn list-merged-branches []
-  (str/split-lines (sh "git for-each-ref --format='%(refname:short)' refs/heads" "--merged")))
-
 (defn switch-branch [branch]
   (sh "git" "switch" branch))
 
