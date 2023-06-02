@@ -1,7 +1,8 @@
 #!/usr/bin/env bb
 (ns git.pull.main
   "WIP - rebase-pull all tracked repos. dirty repos are skipped"
-  (:require [babashka.process :refer [sh]]
+  (:require [babashka.fs :as fs]
+            [babashka.process :refer [sh]]
             [clojure.pprint :as pprint]
             [clojure.string :as str]
             [doric.core :as doric]))
@@ -30,11 +31,10 @@
     (assoc (select-keys (sh "git" "-C" repo "pull" "--rebase" "--autostash" "origin" branch) [:err :exit]) :repo repo)))
 
 (defn parse-repo-shortname [s]
-  (let [pat #".*/([a-zA-Z0-9]+/[a-zA-Z0-9-]+)$"
-        res (second (re-find pat s))]
-    (when (nil? res)
-      (throw (ex-info (str "failed to parse repo shortname from: " s) {:babashka/exit 1})))
-    res))
+  (->> (fs/components s)
+       (take-last 2)
+       (map str)
+       (str/join "/")))
 
 (defn trunc
   [s n]
