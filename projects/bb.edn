@@ -1,0 +1,2 @@
+{:paths ["src"]
+ :bbin/bin {projects {:ns-default projects.cli}}}
