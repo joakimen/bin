@@ -12,3 +12,4 @@ venv
 .envrc
 
 *.code-workspace
+.portal
