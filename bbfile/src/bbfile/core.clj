@@ -12,9 +12,9 @@
         files (fzf {:multi true
                     :preview preview-cmd})]
     (when (empty? files)
-      (throw (ex-info "no files selected" {})))
+      (throw (ex-info "no files selected" {:babashka/exit 1})))
     (println "opening files:")
-    (mapv #(println "-" %) files)
+    (run! #(println "-" %) files)
     (apply p/shell "nvim" "-O" files)))
 
 (defn get-file-dir []
