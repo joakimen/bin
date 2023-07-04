@@ -1,12 +1,14 @@
-(ns todoist.todoist-get-activity)
+(ns todoist.todoist-get-activity
+  (:require [babashka.http-client :as http]
+            [cheshire.core :as json]
+            [clojure.string :as str]))
+
+(import (java.time.format DateTimeFormatter)
+        (java.time OffsetDateTime))
 
 ;; Lists all added/completed todoist-tasks last 24 hours
 ;; Expects env var $TODOIST_TOKEN
-(require '[babashka.curl :as curl]
-         '[cheshire.core :as json]
-         '[clojure.string :as str])
-(import (java.time.format DateTimeFormatter)
-        (java.time OffsetDateTime))
+
 
 (defn getenv
   "get env var, err-exit if var is unset"
@@ -18,7 +20,7 @@
   "fetch activity-log from todoist"
   []
   (let [bearer-token (getenv "TODOIST_TOKEN")]
-    (-> (curl/get "https://api.todoist.com/sync/v9/activity/get"
+    (-> (http/get "https://api.todoist.com/sync/v9/activity/get"
                   {:headers
                    {"Authorization" (str "Bearer " bearer-token)}})
         :body
@@ -48,12 +50,10 @@
 ;; (->> resp
 (->> (query-todoist)
      :events
-
     ;;  replace date-strings with date-objects for comparison
      (map (fn [x] (update x :event_date #(OffsetDateTime/parse %))))
      (filter happened-in-last-24-hours)
      (filter (fn [e] (some #(= (:event_type e) %) ["added" "completed"])))
-
      (mapv format-event)
      (str/join "\n")
      (println))

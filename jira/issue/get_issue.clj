@@ -29,7 +29,7 @@
   - update internal sorting id to reflect column order
   "
 
-  (:require [babashka.curl :as curl]
+  (:require [babashka.http-client :as http]
             [cheshire.core :as json]
             [clojure.string :as str]
             [taoensso.timbre :as log]))
@@ -51,7 +51,7 @@
   ([path opts]
    (log/debug "query opts" opts)
    (let [url (str jira-api-url "/" path)
-         resp (curl/get url (merge auth opts))]
+         resp (http/get url (merge auth opts))]
      (->> resp :body parse-json))))
 
 (defn get-issue [issue-id]
