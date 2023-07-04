@@ -6,5 +6,6 @@
   [_]
   (bbfile/fuzzy-edit))
 
-(defn get-file-dir "select a file with fuzzy completion, return parent dir abspath" [_]
+(defn get-file-dir
+  "select a file with fuzzy completion, return parent dir abspath" [_]
   (bbfile/get-file-dir))
