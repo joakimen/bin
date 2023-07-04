@@ -6,10 +6,10 @@
 
 (defn guess-type []
   (let [cur-dir (str (fs/cwd))]
-    (prn (guess-project-type cur-dir))))
+    (guess-project-type cur-dir)))
 
 (defn list-projects []
-  (prn (l/list-projects)))
+  (l/list-projects))
 
 (defn build-projects []
   (let [projects (l/list-projects)]

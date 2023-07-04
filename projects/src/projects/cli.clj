@@ -6,12 +6,20 @@
   [_]
   (core/build-projects))
 
-(defn guess-type
+(defn guess
   "Guess which type of project this is"
-  [_]
-  (core/guess-type))
+  [{:keys [edn]}]
+  (let [proj-type (core/guess-type)]
+    (if edn
+      (prn proj-type)
+      (println (name proj-type)))))
 
-(defn list-projects
+
+#_{:clj-kondo/ignore [:redefined-var]}
+(defn list
   "List all tracked projects"
-  [_]
-  (core/list-projects))
+  [{:keys [edn]}]
+  (let [res (core/list-projects)]
+    (if edn
+      (prn res)
+      (run! println res))))
