@@ -12,8 +12,6 @@
   []
   (->> (fs/path (fs/home) ".Brewfile") fs/read-all-lines))
 
-(read-brewfile)
-
 (defn list-installed
   "list installed brew formulas, return as vec"
   []
@@ -27,7 +25,13 @@
        (map #(second (re-find #"\w+ \"([a-zA-Z0-9\/\-\@\.]+)\"" %)))
        (filter seq)))
 
-(let [installed (->> (list-installed) set)
-      in-brewfile (->> (read-brewfile) parse-brewfile-formulas set)
+(let [installed (set (list-installed))
+      in-brewfile (set (parse-brewfile-formulas (read-brewfile)))
       missing-in-brewfile (set/difference installed in-brewfile)]
-  (mapv println (sort missing-in-brewfile)))
+  (run! println (sort missing-in-brewfile)))
+
+(comment
+  (->> (list-installed) set)
+
+;;
+  )
