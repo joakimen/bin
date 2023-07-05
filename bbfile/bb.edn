@@ -1,3 +1,0 @@
-{:paths ["src"]
- :bbin/bin {bbfile {:ns-default bbfile.cli}}
- :deps {io.github.joakimen/bbfile {:local/root "."}}}

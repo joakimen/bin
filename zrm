@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-set -e
-for file in $(fzf -m); do
-  rm "$file"
-done
