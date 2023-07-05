@@ -1,0 +1,3 @@
+{:paths ["."]
+ :bbin/bin {dockr {:ns-default dockr.cli}}
+ :deps {io.github.joakimen/dockr {:local/root "."}}}
