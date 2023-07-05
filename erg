@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-[[ -z "$1" ]] && {
-  echo "$0: no pattern specified"
-  exit
-}
-
-# open rg-results in nvim quickfix
-nvim -q <(rg --vimgrep "$1") -c copen
