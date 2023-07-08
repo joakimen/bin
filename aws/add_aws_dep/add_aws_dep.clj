@@ -28,13 +28,12 @@
        flatten
        (apply hash-map)))
 
-(defn add-dep
-  "merge selected deps with deps in specified outfile
-  - format file using zprint
-  - doesn't handle non-existing outfile yet"
-  [file m]
-  (let [content (-> file slurp read-string)
-        updated-content (update content :deps merge m)]
+(defn add-deps
+  "Write `deps` to the `:deps`-key of `outfile`, merging if deps already exists"
+  [file deps]
+  (let [content (try (-> file slurp read-string)
+                     (catch java.io.FileNotFoundException _ {}))
+        updated-content (update content :deps merge deps)]
     (spit file (zprint-str updated-content {:map {:sort? false
                                                   :comma? false}}))))
 
@@ -43,8 +42,7 @@
       all-versions (parse-versions body)
       selected-versions (select-deps all-versions)]
   (when-not (empty? selected-versions)
-    (println "adding" (-> selected-versions keys count) "deps to" outfile)
-    (add-dep outfile selected-versions)))
-
-
-(count (keys {:name "kevin" :age 1}))
+    (println "adding" (-> selected-versions keys count) "dependencies to:" outfile)
+    (doseq [[k v] selected-versions]
+      (println "+" k v))
+    (add-deps outfile selected-versions)))
