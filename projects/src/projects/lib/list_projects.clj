@@ -1,88 +1,86 @@
 (ns projects.lib.list-projects
   "find git-projects
-   - configuration file: $XDG_CONFIG_HOME/projects.yaml"
+   - configuration file: $XDG_CONFIG_HOME/projects.edn"
   (:require [babashka.fs :as fs]
             [babashka.process :as p]
-            [clj-yaml.core :as clj-yaml]
-            [clojure.string :as str]))
+            [clojure.edn :as edn]
+            [clojure.string :as str]
+            [clojure.spec.alpha :as s]))
 
-(defn die [& args]
+(def config-file
+  (str (fs/path (fs/xdg-config-home) "projects.edn")))
+
+(defn- die [& args]
   (throw (ex-info (apply str args) {:babashka/exit 1})))
 
-(def config-file (str (fs/path (fs/xdg-config-home) "projects.yaml")))
+(defn- dir? [dir]
+  (fs/directory? (fs/expand-home dir)))
 
-(defn read-required-file
-  "return contents of file. throw and exit if missing or empty."
-  [file-path]
-  (when (or (not (fs/exists? file-path)) (str/blank? file-path))
-    (die "error: missing config file: " file-path))
-  (let [contents (slurp file-path)]
-    (when (str/blank? contents)
-      (die "error: config file is empty: " file-path))
-    contents))
+(defn- slurp-edn [file]
+  (-> file slurp edn/read-string))
+
+(s/def ::roots (s/coll-of dir?))
+(s/def ::ignores (s/coll-of string?))
+
+(s/def ::max-depth pos?)
+(s/def ::preview-cmd string?)
+
+(s/def ::settings (s/keys :opt-un [::max-depth ::preview-cmd]))
+
+(s/def ::config
+  (s/keys
+   :req-un [::roots]
+   :opt-un [::settings ::ignores]))
 
 (defn parse-config
-  "parse contents of configuration file.
-
-   expects the following structure:
-
-   project:
-     roots: (required)
-       - ~/some-project
-       - /home/moo/dev
-     settings: (optional)
-       - max-depth: int, recursion depth when travering roots for projects
-    ignores:
-       - node_modules
-       - venv
-   "
-  [contents]
-  (let [{project-root-entries :roots
-         ignore-entries :ignores
-         settings :settings} (:projects (clj-yaml/parse-string contents))]
-
-    (when (empty? project-root-entries)
+  "parse contents of configuration file"
+  [{:keys [projects]}]
+  {:pre [(s/valid? ::config projects)]}
+  (let [{:keys [roots ignores settings]} projects]
+    (when (empty? roots)
       (die "error: no project-entries defined in config-file: " config-file))
-
-    {:project-roots (->> project-root-entries
-                         (map (comp str fs/expand-home))
-                         (filterv fs/directory?))
-     :ignores (into [] ignore-entries)
+    {:roots (->> (map (comp str fs/expand-home) roots)
+                 (filter fs/directory?))
+     :ignores (into [] ignores)
      :settings settings}))
 
-(defn fd [{:keys [dir excludes settings]}]
-  (let [exclude-string (->> excludes (map #(str "--exclude=" %)))
-        res (apply p/sh {:dir dir}
-                   "fd"
-                   "--type" "directory"
-                   "--glob" "**/.git"
-                   "--absolute-path"
-                   "--hidden"
-                   "--max-depth" (or (:max-depth settings) 3)
-                   "--no-ignore" ;; don't respect global/user fd-ignorefiles 
-                   exclude-string)]
-    (->> res :out str/trim str/split-lines
+(defn fd [{:keys [dir excludes] {:keys [max-depth]} :settings}]
+  (let [exclude-string (map #(str "--exclude=" %) excludes)
+        {:keys [out]} (apply p/sh {:dir dir}
+                             "fd"
+                             "--type" "directory"
+                             "--glob" "**/.git"
+                             "--absolute-path"
+                             "--hidden"
+                             "--max-depth" (or max-depth 3)
+                             "--no-ignore" ;; don't respect global/user fd-ignorefiles 
+                             exclude-string)]
+    (->> out str/trim str/split-lines
          (filter #(not (str/blank? %)))
-         (mapv (comp str fs/parent)))))
+         (map (comp str fs/parent)))))
 
 (defn resolve-repos
   "receives a cleaned-up version of project-config and return a vec of git repos from the defined roots"
-  [{:keys [ignores settings project-roots]}]
-  (->> project-roots
-       (pmap #(fd {:dir %
+  [{:keys [roots settings ignores]}]
+  (->> (pmap #(fd {:dir %
                    :excludes ignores
-                   :settings settings}))))
+                   :settings settings}) roots)
+       (doall)))
 
 (defn list-projects []
-  (let [config (-> config-file read-required-file parse-config)
-        repos (-> config resolve-repos flatten doall)]
+  (let [config (-> config-file slurp-edn parse-config)
+        repos (-> config resolve-repos flatten)]
     (when (empty? repos)
       (die "couldn't resolve any repos from config: " config-file))
     repos))
 
 (comment
 
+  (list-projects)
+
   (defn debug [s]
     (doto s (println)))
- ;; 
-  )
+
+  (edn/read-string (slurp (str (fs/path (fs/xdg-config-home) "projects.edn"))))
+  ;;
+  )  
