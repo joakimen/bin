@@ -1,48 +1,10 @@
 (ns projects.lib.list-projects
-  "find git-projects
-   - configuration file: $XDG_CONFIG_HOME/projects.edn"
+  "find git-projects"
   (:require [babashka.fs :as fs]
             [babashka.process :as p]
             [clojure.edn :as edn]
             [clojure.string :as str]
-            [clojure.spec.alpha :as s]))
-
-(def config-file
-  (str (fs/path (fs/xdg-config-home) "projects.edn")))
-
-(defn- die [& args]
-  (throw (ex-info (apply str args) {:babashka/exit 1})))
-
-(defn- dir? [dir]
-  (fs/directory? (fs/expand-home dir)))
-
-(defn- slurp-edn [file]
-  (-> file slurp edn/read-string))
-
-(s/def ::roots (s/coll-of dir?))
-(s/def ::ignores (s/coll-of string?))
-
-(s/def ::max-depth pos?)
-(s/def ::preview-cmd string?)
-
-(s/def ::settings (s/keys :opt-un [::max-depth ::preview-cmd]))
-
-(s/def ::config
-  (s/keys
-   :req-un [::roots]
-   :opt-un [::settings ::ignores]))
-
-(defn parse-config
-  "parse contents of configuration file"
-  [{:keys [projects]}]
-  {:pre [(s/valid? ::config projects)]}
-  (let [{:keys [roots ignores settings]} projects]
-    (when (empty? roots)
-      (die "error: no project-entries defined in config-file: " config-file))
-    {:roots (->> (map (comp str fs/expand-home) roots)
-                 (filter fs/directory?))
-     :ignores (into [] ignores)
-     :settings settings}))
+            [projects.config :as config]))
 
 (defn fd [{:keys [dir excludes] {:keys [max-depth]} :settings}]
   (let [exclude-string (map #(str "--exclude=" %) excludes)
@@ -68,10 +30,10 @@
        (doall)))
 
 (defn list-projects []
-  (let [config (-> config-file slurp-edn parse-config)
+  (let [config (config/read-config)
         repos (-> config resolve-repos flatten)]
     (when (empty? repos)
-      (die "couldn't resolve any repos from config: " config-file))
+      (throw (ex-info "couldn't resolve any repos from config" {:babashka/exit 1})))
     repos))
 
 (comment
@@ -83,4 +45,4 @@
 
   (edn/read-string (slurp (str (fs/path (fs/xdg-config-home) "projects.edn"))))
   ;;
-  )  
+  )

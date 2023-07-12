@@ -23,3 +23,8 @@
     (if edn
       (prn res)
       (run! println res))))
+
+(defn delete
+  "Delete one or more local projects"
+  [_]
+  (core/delete-projects))
