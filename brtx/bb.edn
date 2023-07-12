@@ -1,0 +1,3 @@
+{:bbin/bin {brtx {:ns-default brtx.cli}}
+ :paths ["src"]
+ :deps {io.github.joakimen/brtx {:local/root "."}}}
