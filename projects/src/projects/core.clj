@@ -1,5 +1,6 @@
 (ns projects.core
   (:require [babashka.fs :as fs]
+            [clojure.java.browse :refer [browse-url]]
             [clojure.string :as str]
             [fzf.core :refer [fzf]]
             [projects.config :as config]
@@ -31,3 +32,13 @@
       (doseq [proj projects-to-delete]
         (println "-" (project-shortname proj))
         (fs/delete-tree (str proj))))))
+
+(defn browse-pkgs []
+  (let [{:keys [clone-dir excludes settings]} (config/read-config)
+        projects (->> (fd {:dir clone-dir
+                           :excludes excludes
+                           :settings settings}))
+        project (->> projects fzf project-shortname)]
+    (when project
+      (println "Browsing packages for:" project)
+      (browse-url (str "https://github.com/" project "/packages/")))))

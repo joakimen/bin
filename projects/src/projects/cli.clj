@@ -23,3 +23,8 @@
   "Delete one or more local projects"
   [_]
   (core/delete-projects))
+
+(defn browse-pkgs
+  "Browse Github packages for a given project"
+  [_]
+  (core/browse-pkgs))
