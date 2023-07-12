@@ -1,0 +1,2 @@
+{:bbin/bin {bgh {:ns-default bgh.cli}}
+ :paths ["src"]}
