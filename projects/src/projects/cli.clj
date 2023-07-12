@@ -1,11 +1,6 @@
 (ns projects.cli
   (:require [projects.core :as core]))
 
-(defn build
-  "Build all tracked projects"
-  [_]
-  (core/build-projects))
-
 (defn guess
   "Guess which type of project this is"
   [{:keys [edn]}]

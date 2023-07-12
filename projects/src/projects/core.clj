@@ -3,7 +3,6 @@
             [clojure.string :as str]
             [fzf.core :refer [fzf]]
             [projects.config :as config]
-            [projects.lib.build :as build]
             [projects.lib.guess :refer [guess-project-type]]
             [projects.lib.list-projects :as l :refer [fd]]))
 
@@ -19,15 +18,6 @@
 
 (defn list-projects []
   (l/list-projects))
-
-(defn build-projects []
-  (let [projects (l/list-projects)]
-    (->> projects
-         (map #(assoc {} :proj-path % :proj-type (guess-project-type %)))
-         (filter #(not= (:proj-type %) :unknown))
-         (pmap build/build-project)
-         (doall)
-         (remove nil?))))
 
 (defn delete-projects []
   (let [{:keys [clone-dir excludes settings]} (config/read-config)
