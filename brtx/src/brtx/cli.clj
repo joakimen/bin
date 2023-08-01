@@ -1,6 +1,7 @@
 (ns brtx.cli
   (:require [babashka.process :as p]
             [cheshire.core :as json]
+            [clojure.string :as str]
             [fzf.core :refer [fzf]]))
 
 (defn- sh [& args]
@@ -23,3 +24,16 @@
         (let [cmd (cond-> ["rtx" "use" (str plugin "@" version)]
                     (or g global) (conj "--global"))]
           (apply sh cmd))))))
+
+(defn install [_]
+  (let [lang (-> (sh "rtx" "plugin" "ls") str/split-lines fzf)
+        version (-> (sh "rtx" "ls-remote" lang) str/split-lines fzf)
+        cmd ["rtx" "install" (str lang "@" version)]]
+    (apply p/shell cmd)))
+
+
+(comment
+  (install nil)
+
+  ;; 
+  )
