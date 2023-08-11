@@ -19,48 +19,74 @@
 (defn zero-exit? [dir & args]
   (zero? (:exit (apply sh {:dir dir} args))))
 
-(defn is-clean? [repo-path]
+(defn- is-clean? [repo-path]
   (zero-exit? repo-path "git diff --quiet"))
 
-(defn get-current-branch [repo]
+(defn- get-current-branch [repo]
   (run "git" "-C" repo "branch" "--show-current"))
 
-(defn- pull-repo [repo]
-  (let [branch (get-current-branch repo)]
-    (println "pulling repo:" repo "branch:" branch)
-    (assoc (select-keys (sh "git" "-C" repo "pull" "--rebase" "--autostash" "origin" branch) [:err :exit]) :repo repo)))
+(defn- git-pull [repo branch]
+  (sh "git" "-C" repo "pull" "--rebase" "--autostash" "origin" branch))
 
-(defn parse-repo-shortname [s]
+(defn- pull-repo [repo]
+  (let [branch (get-current-branch repo)
+        {:keys [exit out err]} (git-pull repo branch)]
+    {:repo repo
+     :branch branch
+     :exit exit
+     :err err
+     :out out}))
+
+(defn- parse-repo-shortname [s]
   (->> (fs/components s)
        (take-last 2)
        (map str)
        (str/join "/")))
 
-(defn trunc
+(defn- trunc
   [s n]
   (subs s 0 (min (count s) n)))
 
-(defn fmt-msg [msg]
-  (-> msg str/trim str/split-lines first (trunc 40)))
+(defn- fmt-msg [msg]
+  (-> msg str/trim str/split-lines first (trunc 50)))
 
-(let [res (->> (list-projects)
-               (filter is-clean?)
-               (pmap pull-repo)
-               (map #(update % :repo parse-repo-shortname)) ;; shorten name for printing
-               (map #(assoc % :err (if (zero? (:exit %)) "" (fmt-msg (:err %)))))
-               (doall))]
-  (println (doric/table [:repo :exit :err] res)))
+(defn prettify [project]
+  (let [{:keys [err exit repo]} project]
+    {:repo (parse-repo-shortname repo)
+     :exit exit
+     :err (fmt-msg err)}))
+
+(defn -main [& _]
+  (let [clean-projects (filter is-clean? (list-projects))
+        executor (Executors/newFixedThreadPool 128)
+        tasks (mapv #(fn [] (pull-repo %)) clean-projects)
+        execution-results (->> (.invokeAll ^ExecutorService executor tasks)
+                               (map #(.get ^Future %)))
+        result (mapv prettify execution-results)
+        cols (cond-> [:repo :exit]
+               (some #(not= (:exit %) 0) result) (conj :err))
+        table (doric/table cols result)]
+    (println table)))
+
+(-main)
 
 (comment
 
-  (def p (list-projects))
+  (def clean-projects (filter is-clean? (list-projects)))
+  (def pulled (->> clean-projects
+                   (take 5)))
+  pulled
+  (def executor (Executors/newVirtualThreadPerTaskExecutor))
+  (def tasks (mapv #(fn [] (pull-repo %)) clean-projects))
+  (->> (.invokeAll ^ExecutorService executor tasks)
+       (map #(.get ^Future %)))
 
-  (->> p
-       (filter is-clean?)
-       (pmap pull-repo)
-       (map #(update % :repo parse-repo-shortname))
-       (map #(dissoc % :out :err))
-       (doall)
-       (pprint/print-table))
+  tasks
+  (def threads (.invokeAll ^ExecutorService executor tasks))
+  (def exec-results (map #(.get ^Future %) threads))
+
+  (->> (.invokeAll ^ExecutorService executor tasks)
+       (map #(.get ^Future %)))
+
  ;; 
   )
