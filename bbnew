@@ -1,0 +1,22 @@
+#!/usr/bin/env bb
+(require '[clojure.java.io :as io])
+
+(def proj (or (first *command-line-args*)
+              (throw (ex-info "err: please specify a project name" {:babashka/exit 1}))))
+
+(def deps-edn {})
+(def bb-edn {:paths ["src"]
+             :deps {(symbol "io.github.joakimen" proj) {:local/root "."}}
+             :bbin/bin {(symbol proj) {:ns-default (symbol (str proj ".cli"))}}})
+
+(def cli-edn (str "(ns " proj ".cli)"))
+
+
+(defn spit-p [path contents]
+  (println "creating file:" path)
+  (io/make-parents path)
+  (spit path contents))
+
+(spit-p "bb.edn" bb-edn)
+(spit-p "deps.edn" deps-edn)
+(spit-p (str "src/" proj "/cli.clj") cli-edn)
