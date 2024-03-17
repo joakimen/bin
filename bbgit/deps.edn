@@ -1,2 +1,0 @@
-{:deps {io.github.lispyclouds/bblgum {:git/sha "b450a7608ef44267b52674011721856d77007fa0"}
-        io.github.joakimen/fzf.clj {:git/sha "67e81183fc82b7153a58cf056ad8349286e7ec8e"}}}
