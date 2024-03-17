@@ -38,15 +38,10 @@
         (apply p/shell cmd)))))
 
 (comment
-  (install nil)
-
-  (->> (sh "mise ls --json")
-       ->edn
-       (map #(p))))
 
   ;; map over lang keys (:java, :bun, ..)
   ;; map over versions
   ;; flatmap
 
   ;; 
-
+  :rfc)

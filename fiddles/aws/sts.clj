@@ -43,32 +43,3 @@
         :aws/secret-access-key (:SecretAccessKey creds)
         :aws/session-token     (:SessionToken creds)
         ::credentials/ttl      (credentials/calculate-ttl creds)}))))
-
-;; Example steps
-;; 1: create client with basic user credentials
-;; 2: assume role with the client, along with mfa serial and mfa token
-;; 3: create s3 client with assumed role credentials
-;; 4. list buckets using s3 client
-(let [
-      ;; load from 1password or somethin
-      mfa-token-code "577170" 
-
-      ;; load with aero
-      mfa-serial-number "arn:aws:iam::123412341234:mfa/jol"
-      user-creds {:access-key-id "AKIATY00000000000000"
-                  :secret-access-key "****************************************"}
-      assume-role-arn "arn:aws:iam::123412341234:role/OtherRole"
-      sts-client (create-sts-client user-creds)
-      assumed-role-creds (assume-role {:sts-client sts-client
-                                       :role-arn assume-role-arn
-                                       :mfa-serial mfa-serial-number
-                                       :mfa-token mfa-token-code
-                                       :session-prefix "my-session"})
-      credentials-provider (wrap-in-credentials-provider assumed-role-creds)
-      s3-client (aws/client {:api :s3
-                             :region "eu-west-1"
-                             :credentials-provider credentials-provider})]
-
-  ;; list buckets using assumed role credentials 
-  (def assumed-role-creds assumed-role-creds)
-  (aws/invoke s3-client {:op :ListBuckets}))
