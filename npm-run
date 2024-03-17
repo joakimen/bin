@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+scripts_json=$(npm run --json)
+all_scripts=$(jq 'keys[]' -r <<< "$scripts_json")
+
+# set gum height equal to script count to avoid fullscreen
+script_count=$(jq length <<< "$scripts_json")
+script=$(gum filter --height "$script_count" <<< "$all_scripts")
+[[ -z $script ]] || npm run "$script"
