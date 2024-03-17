@@ -1,0 +1,3 @@
+{:bbin/bin {bmise {:ns-default bmise.cli}}
+ :paths ["src"]
+ :deps {io.github.joakimen/bmise {:local/root "."}}}
