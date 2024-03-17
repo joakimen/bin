@@ -1,7 +1,0 @@
-#!/usr/bin/env zsh
-
-# open zsh n times and print time usage
-
-clear
-echo "shell: $SHELL"
-repeat 5 { time zsh -i -c exit }
