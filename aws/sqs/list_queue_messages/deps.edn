@@ -1,8 +1,0 @@
- {:deps {doric/doric {:mvn/version "0.9.0"}
-         com.cognitect.aws/endpoints {:mvn/version "1.1.12.307"}
-         com.cognitect.aws/sqs {:mvn/version "822.2.1109.0"}
-         com.grzm/awyeah-api {:git/url "https://github.com/grzm/awyeah-api"
-                              :git/sha "1810bf624da2be58c77813106a1d51e32db11690"
-                              :git/tag "v0.8.35"}
-         org.babashka/spec.alpha {:git/url "https://github.com/babashka/spec.alpha"
-                                  :git/sha "8df0712896f596680da7a32ae44bb000b7e45e68"}}}
