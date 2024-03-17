@@ -1,0 +1,2 @@
+{:bbin/bin {toggle-alarm {:main-opts ["-f" "toggle_alarm.clj"]}}
+ :deps {io.github.joakimen/toggle-alarm {:local/root "."}}}
