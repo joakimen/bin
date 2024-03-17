@@ -1,0 +1,3 @@
+{:paths ["src"]
+ :deps {io.github.joakimen/psc {:local/root "."}}
+ :bbin/bin {psc {:ns-default psc.cli}}}
