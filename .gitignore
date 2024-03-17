@@ -2,7 +2,7 @@
 .clj-kondo
 .lsp
 .venv
-/.DS_Store
+.DS_Store
 chezmoi
 
 .nrepl-port
@@ -13,3 +13,4 @@ venv
 
 *.code-workspace
 .portal
+.idea
