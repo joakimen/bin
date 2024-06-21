@@ -51,11 +51,13 @@ fi
 echo "downloading..."
 curl -#SLO "$url"
 
+echo
 echo "extracting..."
 tar -xzf "$filename"
 
-echo "cleaning up tarball..."
-rm -v "$filename"
+echo
+echo "cleaning up..."
+rm "$filename"
 
 echo "done."
 echo
