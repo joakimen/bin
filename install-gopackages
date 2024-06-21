@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+while read pkg; do
+  # skip empty lines
+  [[ -z "$pkg" ]] && continue
+
+  echo "installing go package: $pkg"
+  go install "$pkg"
+done < "$HOME/.config/gopackages"
