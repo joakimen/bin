@@ -1,10 +1,24 @@
  (ns git.pull.main
-  "WIP - rebase-pull all tracked repos. dirty repos are skipped"
+  "rebase-pull main branches of all tracked repos.
+
+   Repos are pulled if
+   - repo has a supported remote
+   - work tree is clean
+   - checked out branch is master/main
+
+   idea: split into 3 parts:
+   - collect all repo metadata (branch, remote, clean, etc)
+   - validate repos by inspecting metadata
+    - pull repos in parallel"
   (:require [babashka.fs :as fs]
             [babashka.process :refer [sh]]
             [clojure.string :as str]
             [doric.core :as doric])
   (:import [java.util.concurrent Executors ExecutorService Future]))
+
+(def ^:const supported-remotes
+  ["git@github.com"
+   "https://github.com"])
 
 (defn- run [& args]
   (let [{:keys [out err exit]} (apply sh args)]
@@ -24,6 +38,9 @@
 (defn- is-clean? [repo-path]
   (zero-exit? repo-path "git diff --quiet"))
 
+(defn- get-repo-remote [repo]
+  (:out (sh "git" "-C" repo "config" "--get" "remote.origin.url")))
+
 (defn- get-current-branch [repo]
   (run "git" "-C" repo "branch" "--show-current"))
 
@@ -33,6 +50,18 @@
 (defn- trunc
   [s n]
   (subs s 0 (min (count s) n)))
+
+(defn has-supported-remote? [repo]
+  (let [substr-in? (fn [e coll]
+                     (some #(str/includes? e %) coll))
+        supported-remote? #(substr-in? % supported-remotes)
+        remote-url (get-repo-remote repo)]
+    (when remote-url
+      (supported-remote? remote-url))))
+
+(defn is-on-default-branch? [repo]
+  (let [branch (get-current-branch repo)]
+    (some #{branch} ["master" "main"])))
 
 (defn- pull-repo [repo]
   (let [branch (get-current-branch repo)
@@ -59,9 +88,15 @@
    :err (fmt-msg err)})
 
 (defn -main [& _]
-  (let [clean-projects (filter is-clean? (list-projects))
+  (let [projects (list-projects)
+        filtered-projects
+        (filter (apply every-pred
+                       [is-clean?
+                        has-supported-remote?
+                        is-on-default-branch?])
+                projects)
         executor (Executors/newFixedThreadPool 128)
-        tasks (mapv #(fn [] (pull-repo %)) clean-projects)
+        tasks (mapv #(fn [] (pull-repo %)) filtered-projects)
         execution-results (->> (.invokeAll ^ExecutorService executor tasks)
                                (map #(.get ^Future %)))
         result (mapv prettify execution-results)
@@ -75,7 +110,20 @@
 
 (comment
 
-  (def clean-projects (filter is-clean? (list-projects)))
+  (def projects (list-projects))
+  (def clean-projects (filter is-clean? projects))
+  (def supported-remote-projects (filter has-supported-remote? projects))
+
+  (filter (apply every-pred [is-clean? has-supported-remote?]) projects)
+
+  (->> clean-projects
+       (filter #(not (has-supported-remote? %))))
+
+  (get-repo-remote (nth clean-projects 60))
+  (has-supported-remote? (nth clean-projects 60))
+  (-> clean-projects last has-supported-remote?)
+
+  (-> clean-projects last get-repo-remote)
   (def pulled (->> clean-projects
                    (take 5)))
   pulled
