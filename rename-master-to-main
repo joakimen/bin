@@ -12,3 +12,4 @@ gh api -X PATCH repos/{owner}/{repo} -F default_branch=main --silent
 git push origin --delete master
 git branch -u origin/main main
 git fetch --prune
+git config init.defaultBranch main
