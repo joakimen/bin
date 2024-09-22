@@ -9,4 +9,4 @@ container=$(docker ps --format "{{.Names}}\t{{.Image}}\t{{.Status}}" |
     paste -sd " " -)
 
 echo "stopping: $container"
-docker stop $(echo "$container")
+docker stop "$container"
