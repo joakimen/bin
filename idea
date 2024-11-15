@@ -1,2 +1,12 @@
 #!/usr/bin/env bash
-open -na "IntelliJ IDEA.app" --args "$@"
+
+APP_DIR="$HOME/Applications"
+idea=
+
+if [[ -d "$APP_DIR/IntelliJ IDEA Ultimate.app" ]]; then
+  idea="$APP_DIR/IntelliJ IDEA Ultimate.app"
+elif [[ -d "$APP_DIR/IntelliJ IDEA.app" ]]; then
+  idea="$APP_DIR/IntelliJ IDEA.app"
+fi
+
+open -na "$idea" --args "$@"
