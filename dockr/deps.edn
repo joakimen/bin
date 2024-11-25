@@ -1,2 +1,0 @@
-{:deps {org.clojars.lispyclouds/contajners {:mvn/version "1.0.0"}
-        io.github.joakimen/fzf.clj {:git/sha "f4e85a018b2ecdc0d509e6a606025529774adad8"}}}
