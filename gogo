@@ -21,4 +21,3 @@ func main() {
 }
 EOF
 go run main.go
-code .

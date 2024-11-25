@@ -6,4 +6,4 @@ while read pkg; do
 
   echo "installing go package: $pkg"
   go install "$pkg"
-done < "$HOME/.default-go-packages
+done <"$HOME/.default-go-packages"

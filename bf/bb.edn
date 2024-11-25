@@ -1,3 +1,0 @@
-{:paths ["src"]
- :bbin/bin {bf {:ns-default bf.cli}}
- :deps {io.github.joakimen/bf {:local/root "."}}}
